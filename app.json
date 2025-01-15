@@ -1,0 +1,63 @@
+{
+  "expo": {
+    "name": "Eventyzze",
+    "slug": "eventyzze2",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/general/eventyze-logo.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.eventyzze.app",
+      "userInterfaceStyle": "light"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/general/eventyze-logo.png",
+        "backgroundColor": "#000000"
+      },
+      "package": "com.eventyzze.app",
+      "scheme": "myapp",
+      "minSdkVersion": 21,
+      "targetSdkVersion": 34,
+      "userInterfaceStyle": "light"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/general/eventyze-logo.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/general/eventyze-logo.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#000000"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "6e43d96d-5aa2-40ef-b585-a36bed00cd12"
+      }
+    },
+    "owner": "akem",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/6e43d96d-5aa2-40ef-b585-a36bed00cd12"
+    }
+  }
+}
