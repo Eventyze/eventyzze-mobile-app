@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity, SafeAreaView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -106,30 +106,60 @@ const recommendedShows = [
     artist: 'Dan the creator',
     image: require('../../assets/dashboard/sirProspa.jpeg'),
   },
+  {
+    id: 8,
+    title: 'Shine on Music',
+    artist: 'Dan the creator',
+    image: require('../../assets/dashboard/sirTheo.jpeg'),
+  },
+  {
+    id: 9,
+    title: 'Lively concerto',
+    artist: 'Lively and Them',
+    image: require('../../assets/dashboard/daddyArome.jpg'),
+  },
+  {
+    id: 10,
+    title: 'Sing Off',
+    artist: 'Musiccc',
+    image: require('../../assets/dashboard/sirPhil.jpeg'),
+  },
+  {
+    id: 11,
+    title: 'Shine on Music',
+    artist: 'Dan the creator',
+    image: require('../../assets/dashboard/sirProspa.jpeg'),
+  },
 ];
 
 export default function Dashboard() {
+  const [selectedCategory, setSelectedCategory] = useState(0);
 
   return (
-    <SafeAreaView className="flex-1 mt-20">
-      {/* <ScrollView className="flex-1"> */}
+    <SafeAreaView className="flex-1 mt-12 bg-white">
+      <ScrollView 
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        stickyHeaderIndices={[2]}
+      >
         {/* Explore New Hosts Section */}
         <View className="px-4 pt-4">
-          <Text className="text-xl font-semibold mb-4">Explore New Hosts</Text>
+          <View className="flex-row justify-between items-center px-1 mb-6">
+          <Text className="text-3xl font-semibold text-[#666666]">Explore New Hosts</Text>
+          <TouchableOpacity>
+            <Icon name="search" size={20} color="#B3B3B3" />
+          </TouchableOpacity>
+          </View>
+
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {hosts.map((host) => (
               <TouchableOpacity key={host.id} className="mr-4">
-                {/* <LinearGradient
-                  colors={['#FF8038', '#FF0099']}
-                  className="rounded-full p-[2px]"
-                > */}
                   <View className="bg-white rounded-full p-[2px]">
                     <Image
                       source={host.image}
                       className="w-14 h-14 rounded-full"
                     />
                   </View>
-                {/* </LinearGradient> */}
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -137,25 +167,27 @@ export default function Dashboard() {
 
         {/* Live Shows Section */}
         <View className="mt-3 px-4">
-          <View className="flex-row justify-between items-center mb-4">
-            <Text className="text-xl font-semibold">Live Shows</Text>
+          <View className="flex-row justify-between items-center mb-6">
+            <Text className="text-2xl text-[#F17E35] font-bold"
+            style={{ fontFamily: 'BarlowExtraBold' }}
+            >Live Shows</Text>
             <TouchableOpacity>
-              <Text className="text-[#FF8038]">See All</Text>
+              <Text className="text-lg text-[#666666] font-semibold">See All</Text>
             </TouchableOpacity>
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="rounded-lg">
             {liveShows.map((show) => (
               <TouchableOpacity 
                 key={show.id}
-                className="mr-4 relative"
+                className="mr-4 relative rounded-lg"
               >
                 <Image
                   source={show.image}
-                  className="w-40 h-56 rounded-lg"
+                  className="w-[220px] h-[323px] rounded-lg"
                 />
-                <View className="absolute top-2 left-2 bg-red-500 px-2 py-1 rounded">
+                {/* <View className="absolute top-2 left-2 bg-red-500 px-2 py-1 rounded">
                   <Text className="text-white text-xs">LIVE</Text>
-                </View>
+                </View> */}
                 <LinearGradient
                   colors={['transparent', 'rgba(0,0,0,0.8)']}
                   className="absolute bottom-0 left-0 right-0 h-20 rounded-b-lg p-3"
@@ -168,40 +200,32 @@ export default function Dashboard() {
           </ScrollView>
         </View>
 
-        {/* Recommended Shows Section */}
-        <View className="mt-3 pb-2 px-4">
-          <Text className="text-xl font-semibold mb-4">Recommended Shows</Text>
-          
-          {/* Category Tabs */}
+        {/* Sticky Categories Section */}
+        <View className="bg-white pt-3">
+          <Text className="text-2xl text-[#666666] font-semibold mb-4 px-4">Recommended Shows</Text>
           <ScrollView 
             horizontal 
             showsHorizontalScrollIndicator={false}
-            className="mb-4"
+            className="mb-4 px-4"
           >
             {categories.map((category, index) => (
               <TouchableOpacity
                 key={index}
+                onPress={() => setSelectedCategory(index)}
                 className={`mr-4 px-4 py-2 rounded-full ${
-                  index === 0 ? 'bg-[#FF8038]' : 'bg-gray-100'
+                  index === selectedCategory ? 'bg-[#FF8038]' : 'bg-[#F0F0F0]'
                 }`}
               >
-                <Text
-                  className={`${
-                    index === 0 ? 'text-white' : 'text-gray-600'
-                  }`}
-                >
+                <Text className="text-black">
                   {category}
                 </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
+        </View>
 
-          <ScrollView 
-            className="mb-6"
-            style={{ maxHeight: 230 }}  // Add a fixed height or use percentage
-            showsVerticalScrollIndicator={false}
-          >
-          {/* Shows List */}
+        {/* Scrollable Shows List */}
+        <View className="px-4 pb-20">
           {recommendedShows.map((show) => (
             <TouchableOpacity 
               key={show.id}
@@ -209,7 +233,7 @@ export default function Dashboard() {
             >
               <Image
                 source={show.image}
-                className="w-32 h-32 rounded-lg"
+                className="w-[130px] h-32 rounded-lg"
               />
               <View className="flex-1 ml-3">
                 <Text className="text-base font-semibold">{show.title}</Text>
@@ -217,34 +241,11 @@ export default function Dashboard() {
               </View>
             </TouchableOpacity>
           ))}
-          </ScrollView>
         </View>
-
-        {/* Bottom Navigation */}
-        {/* <View className="absolute bottom-0 left-0 right-0 flex-row justify-around items-center bg-white py-4 border-t border-gray-200">
-          <TouchableOpacity className="items-center">
-            <Icon name="home" size={24} color="#FF8038" />
-            <Text className="text-xs mt-1 text-[#FF8038]">Home</Text>
-          </TouchableOpacity>
-          <TouchableOpacity className="items-center">
-            <Icon name="heart-o" size={24} color="#666" />
-            <Text className="text-xs mt-1 text-gray-600">Favorite</Text>
-          </TouchableOpacity>
-          <TouchableOpacity className="items-center">
-            <View className="bg-[#FF8038] w-12 h-12 rounded-full items-center justify-center">
-              <Icon name="plus" size={24} color="white" />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity className="items-center">
-            <Icon name="bell-o" size={24} color="#666" />
-            <Text className="text-xs mt-1 text-gray-600">Notifications</Text>
-          </TouchableOpacity>
-          <TouchableOpacity className="items-center" onPress={() => router.push('/profile')}>
-            <Icon name="user-o" size={24} color="#666" />
-            <Text className="text-xs mt-1 text-gray-600">Profile</Text>
-          </TouchableOpacity>
-        </View> */}
-        <Footer />
+      </ScrollView>
+      
+      {/* Footer stays outside the ScrollView */}
+      <Footer />
     </SafeAreaView>
   );
 } 

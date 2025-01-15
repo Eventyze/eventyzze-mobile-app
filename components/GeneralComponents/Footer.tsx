@@ -27,9 +27,9 @@ export default function Footer() {
   );
   
   return (
-    <View className="absolute bottom-0 left-0 right-0 flex-row justify-around items-center bg-white py-4 border-t border-gray-200">
+    <View className="absolute bottom-0 left-0 right-0 pb-2 flex-row justify-around items-center bg-white border-t border-gray-200">
       <TouchableOpacity 
-        className="items-center"
+        className={`items-center py-2 ${currentPath === '/dashboard' ? "border-t-4 border-[#FF8038]" : ""}`}
         onPress={() => router.push('/dashboard')}
       >
         <Icon 
@@ -59,7 +59,7 @@ export default function Footer() {
       </TouchableOpacity>
       
       <TouchableOpacity 
-        className="items-center"
+        className={`items-center py-2 ${currentPath === '/profile' ? "border-t-4 border-[#FF8038]" : ""}`}
         onPress={() => router.push('/profile')}
       >
         <Icon 
