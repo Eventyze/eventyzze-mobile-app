@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, TextInput } from 'react-native';
 import { router } from 'expo-router';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Footer from '../../components/GeneralComponents/Footer';
 import { clearLocalStorage } from '../../services/axiosSetup/storage';
 import Toast from 'react-native-toast-message';
+import LogoutModal from '../../components/Profile/LogoutModal';
 
 interface SettingItemProps {
   icon: string;
@@ -29,7 +30,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
   >
     <Icon name={icon} size={24} color={iconColor} />
     <View className="flex-1 ml-3">
-      <Text className="text-base">{title}</Text>
+      <Text className="text-lg font-bold">{title}</Text>
       {subtitle && (
         <Text className="text-sm text-gray-500">{subtitle}</Text>
       )}
@@ -40,12 +41,12 @@ const SettingItem: React.FC<SettingItemProps> = ({
 
 const SectionHeader: React.FC<{ title: string; subtitle?: string }> = ({ title, subtitle }) => (
   <View className="px-4 mt-6 py-2 mb-4">
-    <Text className="text-lg font-semibold"
+    <Text className="text-2xl font-semibold"
     style={{
       fontFamily: 'BarlowExtraBold'
     }}
     >{title}</Text>
-    {subtitle && <Text className="text-base text-gray-500"
+    {subtitle && <Text className="text-xl font-bold text-[#B3B3B3]"
     style={{
       fontFamily: 'BarlowRegular'
     }}
@@ -54,24 +55,26 @@ const SectionHeader: React.FC<{ title: string; subtitle?: string }> = ({ title, 
 );
 
 export default function Settings() {
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-    const handleLogout = async () => {
-      await clearLocalStorage();
-       Toast.show({
-        type: 'success',
-        text1: 'Good bye, we hope to see you again soon!',
-        visibilityTime: 3000,
-      });
-      router.push('/login');
-    }
+  const handleLogout = async () => {
+    await clearLocalStorage();
+    Toast.show({
+      type: 'success',
+      text1: 'Good bye, we hope to see you again soon!',
+      visibilityTime: 3000,
+    });
+    router.push('/login');
+  }
+
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
       <View className="flex-row items-center mt-14 px-4 py-4 bg-white">
         <TouchableOpacity onPress={() => router.back()} className="mr-4">
           <Icon name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
-        <Text className="text-xl font-semibold">Settings</Text>
+        <Text className="text-2xl font-semibold">Settings</Text>
       </View>
 
       {/* Search Bar */}
@@ -93,7 +96,7 @@ export default function Settings() {
           subtitle="Update your account information" 
         />
         <View className="px-4">
-        <View className="pt-2 pb-6 rounded-lg bg-[#dcdfea]">
+        <View className="pt-2 pb-6 rounded-lg bg-[#B7B9DA1F]">
         <SettingItem 
           icon="person-outline" 
           title="Account information" 
@@ -112,7 +115,7 @@ export default function Settings() {
         />
 
         <View className="px-4">
-        <View className="pt-2 pb-6 rounded-lg bg-[#dcdfea]">
+        <View className="pt-2 pb-6 rounded-lg bg-[#B7B9DA1F]">
         <SettingItem 
           icon="moon-outline" 
           title="Display" 
@@ -134,7 +137,7 @@ export default function Settings() {
         />
 
         <View className="px-4">
-        <View className="pt-2 pb-6 rounded-lg bg-[#dcdfea]">
+        <View className="pt-2 pb-6 rounded-lg bg-[#B7B9DA1F]">
         <SettingItem 
           icon="shield-outline" 
           title="Security" 
@@ -148,7 +151,7 @@ export default function Settings() {
         />
 
         <View className="px-4">
-        <View className="pt-2 pb-6 rounded-lg bg-[#dcdfea]">
+        <View className="pt-2 pb-6 rounded-lg bg-[#B7B9DA1F]">
         <SettingItem 
           icon="trash-outline" 
           title="Clear cache" 
@@ -156,21 +159,28 @@ export default function Settings() {
         <SettingItem 
           icon="trash-bin-outline" 
           title="Delete account" 
-          iconColor="#FF3B30"
+          iconColor="#9F090F"
         />
         </View>
         </View>
 
         {/* Logout Button */}
-        <View className="px-4 py-4">
+        <View className="px-4 py-4 mt-6 mb-6">
           <TouchableOpacity 
-            className="bg-red-100 py-3 rounded-lg flex-row justify-center gap-4 items-center"
-            onPress={async () => handleLogout()}
+            className="bg-[#FFDCDCB2] pl-4 py-3 rounded-lg flex-row justify-left gap-4 items-center"
+            onPress={() => setShowLogoutModal(true)}
           >
-            <Icon name="log-out-outline" size={24} color="#FF0000" className="w-6"/>
-            <Text className="text-red-500 font-semibold">Log out</Text>
+            <Icon name="log-out-outline" size={24} color="#9F090F" className="w-6"/>
+            <Text className="text-[#9F090F] text-lg font-bold">Log out</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Add the LogoutModal component */}
+        <LogoutModal
+          visible={showLogoutModal}
+          onClose={() => setShowLogoutModal(false)}
+          onLogout={handleLogout}
+        />
 
         {/* Bottom padding for footer */}
         <View className="h-20" />

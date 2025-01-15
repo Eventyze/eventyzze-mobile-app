@@ -188,13 +188,13 @@ export default function Dashboard() {
                 {/* <View className="absolute top-2 left-2 bg-red-500 px-2 py-1 rounded">
                   <Text className="text-white text-xs">LIVE</Text>
                 </View> */}
-                <LinearGradient
+                {/* <LinearGradient
                   colors={['transparent', 'rgba(0,0,0,0.8)']}
                   className="absolute bottom-0 left-0 right-0 h-20 rounded-b-lg p-3"
                 >
                   <Text className="text-white font-semibold">{show.title}</Text>
                   <Text className="text-white text-sm opacity-80">{show.artist}</Text>
-                </LinearGradient>
+                </LinearGradient> */}
               </TouchableOpacity>
             ))}
           </ScrollView>

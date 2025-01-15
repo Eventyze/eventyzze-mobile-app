@@ -59,15 +59,15 @@ export default function Footer() {
       </TouchableOpacity>
       
       <TouchableOpacity 
-        className={`items-center py-2 ${currentPath === '/profile' ? "border-t-4 border-[#FF8038]" : ""}`}
+        className={`items-center py-2 ${currentPath === '/profile' || currentPath === '/settings' ? "border-t-4 border-[#FF8038]" : ""}`}
         onPress={() => router.push('/profile')}
       >
         <Icon 
           name="user-o" 
           size={24} 
-          color={currentPath === '/profile' ? "#FF8038" : "#666"} 
+          color={currentPath === '/profile' || currentPath === '/settings' ? "#FF8038" : "#666"} 
         />
-        <Text className={`text-xs mt-1 ${currentPath === '/profile' ? "text-[#FF8038]" : "text-gray-600"}`}>
+        <Text className={`text-xs mt-1 ${currentPath === '/profile' || currentPath === '/settings' ? "text-[#FF8038]" : "text-gray-600"}`}>
           Profile
         </Text>
       </TouchableOpacity>
