@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   ViewStyle,
   DimensionValue,
+  ImageBackground
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -21,6 +22,7 @@ interface ModalProps {
   width?: DimensionValue;
   showCloseIcon?: boolean;
   closeOnBackdropPress?: boolean;
+  imageSrc?: string | any
 }
 
 const Modal: React.FC<ModalProps> = ({

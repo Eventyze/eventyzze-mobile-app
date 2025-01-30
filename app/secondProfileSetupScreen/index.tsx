@@ -234,7 +234,7 @@ export default function SecondProfileSetupScreen() {
         type: "error",
         text1: "Please select your state",
       });
-    }
+    } 
 
     if (!formData.address.trim()) {
       return Toast.show({
@@ -324,25 +324,25 @@ export default function SecondProfileSetupScreen() {
         style={{ flex: 1 }}
       >
         <View className="flex bg-white pb-4 shadow-gray-600 px-4 mt-20">
-          <Animated.View className="flex-row gap-2 items-center">
-            <View>
-              <Text className="text-2xl" style={{ fontFamily: "BarlowBold" }}>
-                Profile Setup
-              </Text>
-            </View>
+        <Animated.View className="flex-row gap-2 items-center">
+          <View>
+            <Text className="text-2xl" style={{ fontFamily: "BarlowBold" }}>
+              Profile Setup
+            </Text>
+          </View>
           </Animated.View>
         </View>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
-            <View className="pt-7 pb-6 px-4">
-              <Animated.View className="flex-col justify-between items-start w-full">
-                <View className="w-full">
+        <View className="pt-7 pb-6 px-4">
+          <Animated.View className="flex-col justify-between items-start w-full">
+            <View className="w-full">
                   <Text
                     className="text-2xl"
                     style={{ fontFamily: "BarlowBold" }}
                   >
-                    Phone
-                  </Text>
+              Phone
+              </Text>
                   <TouchableOpacity
                     activeOpacity={0.8}
                     className="bg-white border border-[#C9C9C9] rounded-xl"
@@ -364,30 +364,30 @@ export default function SecondProfileSetupScreen() {
                       pickerBackgroundColor="#FF8038"
                     />
                   </TouchableOpacity>
-                </View>
-                <View className="w-full mt-4">
+            </View>
+            <View className="w-full mt-4">
                   <Text
                     className="text-2xl"
                     style={{ fontFamily: "BarlowBold" }}
                   >
-                    Full Name
-                  </Text>
-                  <InputField
-                    placeholder="eg: John Doe"
-                    width="100%"
+                Full Name
+              </Text>
+              <InputField 
+                placeholder="eg: John Doe" 
+                width="100%" 
                     value={formData.fullName}
                     onChange={(text) =>
                       setFormData((prev) => ({ ...prev, fullName: text }))
                     }
-                  />
-                </View>
-                <View className="w-full mt-4">
+              />
+            </View>
+            <View className="w-full mt-4">
                   <Text
                     className="text-2xl"
                     style={{ fontFamily: "BarlowBold" }}
                   >
-                    Country
-                  </Text>
+                Country
+              </Text>
                   <TouchableOpacity
                     onPress={() => {
                       handleCountryLoading();
@@ -417,14 +417,14 @@ export default function SecondProfileSetupScreen() {
                       </Text>
                     )}
                   </TouchableOpacity>
-                </View>
-                <View className="w-full mt-4">
+            </View>
+            <View className="w-full mt-4">
                   <Text
                     className="text-2xl"
                     style={{ fontFamily: "BarlowBold" }}
                   >
-                    State
-                  </Text>
+                State
+              </Text>
                   <TouchableOpacity
                     onPress={() => handleStateLoading()}
                     className="mt-2 border border-gray-300 p-6 rounded-xl bg-white"
@@ -438,47 +438,47 @@ export default function SecondProfileSetupScreen() {
                       {formData.state?.label || "Tap to select state"}
                     </Text>
                   </TouchableOpacity>
-                </View>
-                <View className="w-full mt-4">
+            </View>
+            <View className="w-full mt-4">
                   <Text
                     className="text-2xl"
                     style={{ fontFamily: "BarlowBold" }}
                   >
-                    Address
-                  </Text>
-                  <InputField
-                    placeholder="eg: Plot 5 Ronald Road"
-                    width="100%"
+                Address
+              </Text>
+              <InputField 
+                placeholder="eg: Plot 5 Ronald Road" 
+                width="100%" 
                     value={formData.address}
                     onChange={(text) =>
                       setFormData((prev) => ({ ...prev, address: text }))
                     }
-                  />
-                </View>
-              </Animated.View>
+              />
             </View>
-
+          </Animated.View>
+        </View>
+        
             <View className="flex-1 flex-row px-16 py-2 justify-center items-center mt-2 mb-4">
-              <View className="gap-4 flex-1 flex-row justify-center items-center mt-2">
-                <Button
-                  title="Back"
-                  gradientPadding={1}
-                  gradientColors={["#808080", "#808080", "#808080"]}
-                  buttonColour={"#808080"}
-                  buttonWidth={"[50px]"}
-                  action={handleBack}
-                />
-                <Button
-                  title="Next"
-                  gradientPadding={1}
-                  gradientColors={["#FF8038", "#FF8038", "#FF8038"]}
-                  buttonColour={"#FF8038"}
-                  buttonWidth={"[50px]"}
-                  action={handleNext}
-                />
-              </View>
-            </View>
-          </ScrollView>
+          <View className="gap-4 flex-1 flex-row justify-center items-center mt-2">
+        <Button
+            title="Back"
+            gradientPadding={1}
+            gradientColors={["#808080", "#808080", "#808080"]}
+            buttonColour={"#808080"}
+            buttonWidth={"[50px]"}
+            action={handleBack}
+          />
+          <Button
+            title="Next"
+            gradientPadding={1}
+            gradientColors={["#FF8038", "#FF8038", "#FF8038"]}
+            buttonColour={"#FF8038"}
+            buttonWidth={"[50px]"}
+            action={handleNext}
+          />
+        </View>
+        </View>
+      </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
 
