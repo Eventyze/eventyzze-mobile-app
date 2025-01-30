@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { HelloWave } from "@/components/HelloWave";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import * as Device from 'expo-device';
 import {
   View,
   Text,
@@ -38,7 +39,15 @@ export default function Login() {
     try {
       setIsLoading(true);
 
-      const response = await emailLogin(loginInput);
+      const deviceId = Device.osInternalBuildId;
+
+      const loginData = {
+        email: loginInput.email,
+        password: loginInput.password,
+        deviceId,
+      }
+
+      const response = await emailLogin(loginData);
 
       if (response.status === 200) {
         // Store user data in context

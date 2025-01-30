@@ -172,9 +172,9 @@ export const emailSignup = async (body: SignupBody): Promise<ApiResponse> => {
 
 
 
-  export const updateProfile = async (body: Record<string, any>): Promise<ApiResponse> => {
+  export const updateProfileFirstime = async (body: Record<string, any>): Promise<ApiResponse> => {
     try {
-      const response = await axios.put("/users/profile-update", { body }, {
+      const response = await axios.put("/users/first-time-profile-update", { body }, {
         headers: {
           "Content-Type": "application/json",
         },

@@ -16,7 +16,7 @@ export default function Closure() {
             className="text-3xl mb-6" 
             style={{ fontFamily: 'BarlowBold' }}
           >
-            Eventyze
+            Eventyzze
           </Text>
 
           {/* Images Container with Dotted Line */}

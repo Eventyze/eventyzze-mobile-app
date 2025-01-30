@@ -92,7 +92,7 @@ const Welcome = () => {
               </Text>
               <View className="mt-2 w-full flex justify-center items-center" style={{ overflow: 'hidden' }}>
                 <Button
-                  title={"Sign up"}
+                  title={"Get Started"}
                   action={() => router.push("/signup")}
                   textColor={"black"}
                   buttonColour={"#999999"}

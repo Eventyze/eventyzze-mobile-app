@@ -5,7 +5,7 @@ import Button from "../../components/Button";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { router, useLocalSearchParams } from "expo-router";
 import Toast from "react-native-toast-message";
-import { updateProfile } from "../../services/axiosFunctions/userAxios/userAxios";
+import { updateProfileFirstime } from "../../services/axiosFunctions/userAxios/userAxios";
 
 export default function Preferences() {
   const params = useLocalSearchParams();
@@ -49,7 +49,7 @@ export default function Preferences() {
         interests: selectedOptions
       };
 
-      const response = await updateProfile(userData);
+      const response = await updateProfileFirstime(userData);
 
       if (response.status === 200) {
         router.push("/signupRedirect");

@@ -154,7 +154,7 @@ export default function ProfileSetup() {
 
     // Store the profile data in route params
     router.push({
-      pathname: '/preferenceSelection',
+      pathname: '/secondProfileSetupScreen',
       params: {
         username,
         bio,
@@ -206,7 +206,7 @@ export default function ProfileSetup() {
                 Set a name that would be visible to others
               </Text>
               <InputField 
-                placeholder="Username" 
+                placeholder={username ? username : "Username"} 
                 width="100%" 
                 value={username}
                 onChange={setUsername}
@@ -228,7 +228,7 @@ export default function ProfileSetup() {
             </View>
             <View className="w-full items-center mt-4">
               <TextArea 
-                placeholder="Eventyzze" 
+                placeholder={bio ? bio : "Eventyzze"} 
                 value={bio}
                 onChangeText={setBio}
               />

@@ -73,6 +73,10 @@ export default function RootLayout() {
             options={{ headerShown: false, navigationBarHidden: true }}
           />
           <Stack.Screen
+            name="secondProfileSetupScreen/index"
+            options={{ headerShown: false, navigationBarHidden: true }}
+          />
+          <Stack.Screen
             name="signupRedirect/index"
             options={{ headerShown: false, navigationBarHidden: true }}
           />

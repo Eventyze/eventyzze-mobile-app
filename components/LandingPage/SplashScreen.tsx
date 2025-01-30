@@ -40,7 +40,7 @@ const SplashScreen = () => {
       {stage === 2 && (
         <Animated.Image
           entering={ZoomIn.duration(1000)} // Smooth zoom-in animation for the logo
-          source={require('../../assets/general/eventyze-logo.png')}
+          source={require('../../assets/general/eventyzze-logo.png')}
           className="w-full h-80"
         />
       )}
