@@ -185,7 +185,7 @@ export default function Otp() {
               </Text>
             </Text>
           </View>
-          <View className="w-full mt-32">
+          <View className="w-full mt-28">
             {/* <Button
               title={isLoading ? <ActivityIndicator size="small" color="#FF8038" /> : "Verify Account"}
               gradientPadding={0.1}

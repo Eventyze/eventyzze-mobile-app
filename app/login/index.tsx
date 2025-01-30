@@ -100,8 +100,7 @@ export default function Login() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
-        <View className="pt-16 pb-6 px-4">
+        <View className="pt-16 pb-6 bg-white px-4">
           <Animated.View className="flex-row justify-between items-center">
             <View>
               <Text className="text-4xl" style={{ fontFamily: "BarlowBold" }}>
@@ -113,6 +112,7 @@ export default function Login() {
             </View>
           </Animated.View>
         </View>
+      <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
         <View className="w-full px-4 mt-10 mb-4">
           <View className="w-full items-center gap-2">
             <View className="w-full">

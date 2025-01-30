@@ -13,9 +13,15 @@ export default function Preferences() {
   const [isLoading, setIsLoading] = useState(false);
 
   const profileData = React.useMemo(() => ({
-    username: params.username as string,
+    userName: params.userName as string,
     bio: params.bio as string,
-    profileImage: params.profileImage as string,
+    phone: params.phone as string,
+    fullName: params.fullName as string,
+    country: params.country as string,
+    state: params.state as string,
+    address: params.address as string,
+    stateCode: params.stateCode as string,
+    countryCode: params.countryCode as string,
   }), [params]);
 
   const options: string[] = React.useMemo(() => [
@@ -34,6 +40,7 @@ export default function Preferences() {
   }, []);
 
   const handleNext = useCallback(async () => {
+    console.log('prof', profileData)
     if (selectedOptions.length === 0) {
       Toast.show({
         type: 'error',
@@ -48,7 +55,6 @@ export default function Preferences() {
         ...profileData,
         interests: selectedOptions
       };
-
       const response = await updateProfileFirstime(userData);
 
       if (response.status === 200) {

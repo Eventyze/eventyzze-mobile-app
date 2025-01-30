@@ -1,5 +1,5 @@
 import Button from "@/components/Button";
-import React from "react";
+import React, { useState } from "react";
 import { Text, View, Image, SafeAreaView } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { router } from "expo-router";
@@ -10,6 +10,16 @@ import LandingBottomRightImage from "../../assets/landingPage/landing-bottom-rig
 
 
 const Welcome = () => {
+
+  const [loading, setLoading] = useState<any>(false)
+
+  const enter = () => {
+    setLoading(true)
+    setTimeout(()=>{
+      router.push("/signup")
+     return setLoading(false)
+    },1000)
+  }
 
   return (
     <SafeAreaView className="flex-1">
@@ -92,8 +102,8 @@ const Welcome = () => {
               </Text>
               <View className="mt-2 w-full flex justify-center items-center" style={{ overflow: 'hidden' }}>
                 <Button
-                  title={"Get Started"}
-                  action={() => router.push("/signup")}
+                  title={loading ? "Loading..." : "Get Started"}
+                  action={() => enter()}
                   textColor={"black"}
                   buttonColour={"#999999"}
                 />

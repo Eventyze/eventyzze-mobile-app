@@ -6,9 +6,10 @@ import Button from "../../components/Button";
 import { router } from "expo-router";
 import TextArea from "../../components/GeneralComponents/TextAreaComponent";
 import { Ionicons } from '@expo/vector-icons';
-import { requestCameraPermissionsAsync, requestMediaLibraryPermissionsAsync, MediaTypeOptions, launchImageLibraryAsync, launchCameraAsync} from 'expo-image-picker'
+import { requestCameraPermissionsAsync, requestMediaLibraryPermissionsAsync, launchImageLibraryAsync, launchCameraAsync} from 'expo-image-picker'
 import { updateUserImage } from "../../services/axiosFunctions/userAxios/userAxios";
 import Toast from "react-native-toast-message";
+import * as ImagePicker from 'expo-image-picker';
 
 export default function ProfileSetup() {
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -60,7 +61,7 @@ export default function ProfileSetup() {
 
     try {
       const result = await launchImageLibraryAsync({
-        mediaTypes: MediaTypeOptions.Images,
+        mediaTypes: ["images"],
         allowsEditing: true,
         aspect: [1, 1],
         quality: 1,
@@ -82,15 +83,12 @@ export default function ProfileSetup() {
 
     setIsLoading(true);
     try {
-      // Create form data
       const formData = new FormData();
       
-      // Append the image file
       formData.append('image', {
         uri: tempImage,
         type: 'image/jpeg',
         name: 'profile-image.jpg',
-        // Add these properties for iOS
         size: undefined,
         lastModified: undefined,
       } as any);
@@ -98,13 +96,12 @@ export default function ProfileSetup() {
       const response = await updateUserImage(formData);
 
       if (response.status === 200) {
-        // Get the image URL from the response
         const imageUrl = response.data?.data?.imageUrl || response.data?.imageUrl;
         
         if (imageUrl) {
-          setProfileImage(imageUrl); // Use the returned URL instead of tempImage
+          setProfileImage(imageUrl);
         } else {
-          setProfileImage(tempImage); // Fallback to tempImage if no URL is returned
+          setProfileImage(tempImage);
         }
         
         setTempImage(null);
@@ -152,11 +149,10 @@ export default function ProfileSetup() {
       });
     }
 
-    // Store the profile data in route params
     router.push({
       pathname: '/secondProfileSetupScreen',
       params: {
-        username,
+        userName: username,
         bio,
         profileImage,
       }
@@ -166,13 +162,13 @@ export default function ProfileSetup() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* <StatusBar hidden={true} /> */}
-      <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
-        <View className="mt-20">
           <View>
-            <Text className="text-2xl ml-4" style={{ fontFamily: "BarlowBold" }}>
+            <Text className="text-2xl mt-20 pb-4 ml-4" style={{ fontFamily: "BarlowBold" }}>
               Profile Setup
             </Text>
           </View>
+      <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
+        <View className="">
           <Animated.View className="flex-row justify-center items-center mt-4">
             <TouchableOpacity 
               onPress={() => setIsModalVisible(true)}
