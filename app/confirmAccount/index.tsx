@@ -31,7 +31,7 @@ export default function Otp() {
 
   useEffect(() => {
     const fetchEmail = async () => {
-      const email = await getLocalStorageData('email');
+      const email:string | any = await getLocalStorageData('email');
       setUserEmail(email);
     };
     fetchEmail();

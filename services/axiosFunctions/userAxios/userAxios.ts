@@ -144,6 +144,8 @@ export const emailSignup = async (body: SignupBody): Promise<ApiResponse> => {
       const data = new FormData();
 
       const imageFile = formData.get('image');
+
+      console.log('img', imageFile)
       
       if (imageFile) {
         data.append('image', {
@@ -194,3 +196,22 @@ export const emailSignup = async (body: SignupBody): Promise<ApiResponse> => {
       return error.response;
     }
   };
+
+
+export const userLogout = async (email:string) => {
+  try {
+    const response = await axios.post("/users/logout", email);
+    return response;
+    } catch (error: any) {
+      return error.response;
+      }
+}
+
+// export const userLogoutForce = async () => {
+//   try {
+//     const response = await axios.post("/auth/logout");
+//     return response;
+//     } catch (error: any) {
+//       return error.response;
+//       }
+// }

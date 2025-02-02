@@ -22,13 +22,13 @@ import {
 } from "../../services/axiosFunctions/userAxios/userAxios";
 import Toast from "react-native-toast-message";
 import { useUser } from "../../context/UserContext";
-import { storeLocalStorageData } from "../../services/axiosSetup/storage";
+import { logoutClear, storeLocalStorageData } from "../../services/axiosSetup/storage";
 
 export default function Login() {
   const [loginInput, setLoginInput] = useState({ email: "", password: "" });
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { setUser, setIsAuthenticated } = useUser();
+  const { setUser, setIsAuthenticated, logoutUser } = useUser();
 
   const handleInputChange = (name: string, value: string) => {
     setLoginInput((prev: any) => ({ ...prev, [name]: value }));
@@ -50,14 +50,20 @@ export default function Login() {
       const response = await emailLogin(loginData);
 
       if (response.status === 200) {
-        // Store user data in context
         setUser(response?.data?.data?.user);
         setIsAuthenticated(true);
 
-        // Store user data in local storage
         await storeLocalStorageData(
           "user",
-          JSON.stringify(response?.data?.data)
+            response?.data?.data?.user
+        );
+        await storeLocalStorageData(
+          "accessToken",
+          response?.data?.data?.accessToken
+        );
+        await storeLocalStorageData(
+          "refreshToken",
+          response?.data?.data?.refreshToken
         );
 
         Toast.show({
@@ -65,8 +71,6 @@ export default function Login() {
           text1: response.data?.message || "Login successful!",
         });
 
-        // Navigate based on profile setup status
-        console.log("user", response?.data?.data?.user);
         if (!response?.data?.data?.user?.isInitialProfileSetupDone) {
           router.push("/profileSetup");
         } else {
@@ -82,7 +86,16 @@ export default function Login() {
         await storeLocalStorageData("email", response?.data?.data?.user?.email);
         await resendOtp(response?.data?.data?.user?.email);
         return router.push("/confirmAccount");
-      } else {
+      } else if (response.status === 409) {
+        Toast.show({
+          type: "error",
+          text1:
+            "This account is already Logged in on another device",
+        });
+        await logoutClear()
+        logoutUser()
+        return router.push("/login");
+      }else {
         return Toast.show({
           type: "error",
           text1: response.data?.message || "Login failed. Please try again.",

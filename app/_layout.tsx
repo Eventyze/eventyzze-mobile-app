@@ -15,7 +15,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import Toast from "react-native-toast-message";
 import { View, Text, TouchableOpacity, Pressable, TouchableWithoutFeedback } from "react-native";
 import { UserProvider, useUser } from '../context/UserContext';
-import { clearLocalStorage, getLocalStorageData } from '../services/axiosSetup/storage';
+import { clearLocalStorage } from '../services/axiosSetup/storage';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 preventAutoHideAsync();

@@ -26,3 +26,11 @@ export const clearLocalStorage = async () => {
     console.error('Error clearing storage:', error);
   }
 }; 
+
+export const logoutClear = async () => {
+  try {
+    return await AsyncStorage.multiRemove(["accessToken", "refreshToken"]);
+  } catch (error) {
+    console.error('Error clearing storage:', error);
+  }
+}; 

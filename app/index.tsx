@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useUser } from '../context/UserContext';
 import { useFonts } from 'expo-font';
 import { useColorScheme } from 'react-native';
+import { redirectToLoginPage } from '../services/axiosSetup/axios';
 
 const App = () => {
   const [isSplashVisible, setIsSplashVisible] = useState(true);
@@ -15,7 +16,7 @@ const App = () => {
 
   // useColorScheme('light');
 
-  const { setUser, user, setIsAuthenticated } = useUser();
+  const { setUser, setIsAuthenticated } = useUser();
 
   useEffect(() => {
     checkAuth();
@@ -23,20 +24,20 @@ const App = () => {
 
   const checkAuth = async () => {
     try {
-      await clearLocalStorage();
       const userData = await getLocalStorageData('user');
-      const accessToken = await getLocalStorageData('accessToken');
-      const refreshToken = await getLocalStorageData('refreshToken');
-
-      if (userData && accessToken && refreshToken) {
-        const user = JSON.parse(userData);
-        setUser(user);
+  
+      if (userData) {
+        setUser(userData);
         setIsAuthenticated(true);
+      } else {
+        console.warn('No user data found, but not clearing storage yet');
+        setIsAuthenticated(false);
       }
     } catch (error) {
       console.error('Auth check error:', error);
     }
   };
+  
 
   useEffect( () => {
     // Hide the splash screen after a delay
@@ -51,7 +52,7 @@ const App = () => {
   //   );
   // }
 
-  return isSplashVisible ? <SplashScreen /> : !user ? <Welcome /> : <Dashboard />
+  return isSplashVisible ? <SplashScreen /> :  <Welcome />
 };
 
 export default App;

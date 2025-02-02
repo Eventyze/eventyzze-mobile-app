@@ -95,6 +95,8 @@ export default function ProfileSetup() {
 
       const response = await updateUserImage(formData);
 
+      console.log('res', response.data)
+
       if (response.status === 200) {
         const imageUrl = response.data?.data?.imageUrl || response.data?.imageUrl;
         

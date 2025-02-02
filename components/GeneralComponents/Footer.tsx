@@ -1,29 +1,76 @@
-import React, { useCallback, useState } from "react";
-import { View, Text, TouchableOpacity, StatusBar } from "react-native";
+import React, { useCallback, useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StatusBar,
+  ActivityIndicator,
+} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { router, useFocusEffect, usePathname } from "expo-router";
 import Modal from "./Modal";
 import EventModal from "./EventPrompt";
 import backgroundImage from "../../assets/general/prompt-banner.png";
+import { getLocalStorageData } from "@/services/axiosSetup/storage";
+import { useUser } from "@/context/UserContext";
+import NewUserPrompt from "./CreateEventPrompts/NewUserPrompt";
+import ExpiredFreeSubscriptionPrompt from "./CreateEventPrompts/ExpiredFreeSubscriptionPrompt";
+import ExpiredSubscriptionPrompt from "./CreateEventPrompts/ExpiredSubscriptionPrompt";
+import SubscribedUserPrompt from "./CreateEventPrompts/SubscribedUserPrompt";
 
 export default function Footer() {
   const currentPath = usePathname();
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isNewUserModel, setIsNewUserModal] = useState(false);
   const [createEventModal, setCreateEventModal] = useState(false);
+  // const [userEligibleForFree, setUserEligibleForFree] = useState(false);
+  const [userIsHost, setUserIsHost] = useState(false);
+  const [userIsExpired, setUserIsExpired] = useState(false);
+  const [newUserExhaustedFree, setNewUserExhaustedFree] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
-      setIsModalVisible(false);
+      setIsNewUserModal(false);
     };
   }, []);
 
   useFocusEffect(
     useCallback(() => {
-      setIsModalVisible(false);
+      setIsNewUserModal(false);
 
       return () => {};
     }, [])
   );
+
+  const createEventRedirect = async () => {
+    setLoading(true);
+    const user = await getLocalStorageData("user");
+    if (!user.isInitialHostingOfferExhausted) {
+      setIsNewUserModal(true);
+      return setLoading(false);
+    }
+    if (
+      user.isInitialHostingOfferExhausted && user.subscriptionPlan === "Free"
+    ) {
+      setNewUserExhaustedFree(true);
+      return setLoading(false);
+    }
+    if (
+      user.subscriptionPlan !== "Free" &&
+      user.subscriptionDetails?.dateOfExpiry &&
+      new Date(user.subscriptionDetails.dateOfExpiry) < new Date()
+    ) {
+      setUserIsExpired(true);
+      return setLoading(false);
+    }
+
+    if (user.subscriptionPlan !== "Free" && new Date(user.subscriptionDetails?.dateOfExpiry) >= new Date()) {
+      setUserIsHost(true);
+      return setLoading(false);
+    }
+  
+    setLoading(false)
+  };
 
   return (
     <View className="absolute bottom-0 left-0 right-0 pb-2 flex-row justify-around items-center bg-white border-t border-gray-200">
@@ -54,10 +101,14 @@ export default function Footer() {
 
       <TouchableOpacity
         className="items-center"
-        onPress={() => setIsModalVisible(true)}
+        onPress={() => createEventRedirect()}
       >
         <View className="bg-[#FF8038] w-12 h-12 rounded-full items-center justify-center">
-          <Icon name="plus" size={24} color="white" />
+          {loading ? (
+            <ActivityIndicator size={30} color="white" />
+          ) : (
+            <Icon name="plus" size={24} color="white" />
+          )}
         </View>
       </TouchableOpacity>
 
@@ -93,7 +144,7 @@ export default function Footer() {
           Profile
         </Text>
       </TouchableOpacity>
-      <Modal
+      {/* <Modal
         isVisible={createEventModal}
         onClose={() => setCreateEventModal(false)}
         title="Error"
@@ -118,52 +169,87 @@ export default function Footer() {
             Upgrade
           </Text>
         </TouchableOpacity>
-      </Modal>
+      </Modal> */}
 
+      {/* New user prompt */}
       <EventModal
-        isVisible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
+        isVisible={isNewUserModel}
+        onClose={() => setIsNewUserModal(false)}
         height="50%"
         width="100%"
         imageSrc={backgroundImage}
         showHeader={true}
         title="Eventyzze"
       >
-        {isModalVisible && (
+        {isNewUserModel && (
           <StatusBar
             barStyle="light-content"
             backgroundColor="transparent"
             translucent
           />
         )}
-        <Text className="text-center text-xl font-semibold">
-          Hi there, as a first time user, you are on a free subscription. You
-          have 4 hours of free streaming, which can only be used once within 30
-          days. 😊
-        </Text>
-        <Text className="text-center text-xl text-gray-700 mt-4 font-semibold italic">
-          However, you can upgrade to a host today to create and host more
-          events (You will still enjoy your free service)!!{" "}
-          <Text className="font-bold">😁</Text>
-        </Text>
-        <View className="flex-1 flex-row justify-center items-center px-24 gap-4">
-          <TouchableOpacity
-            className="bg-white w-full border border-[#FF8038] rounded-full p-4"
-            // onPress={() => router.push("")}
-          >
-            <Text className="text-center text-black text-lg font-semibold">
-              Continue free
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="bg-[#FF8038] w-full rounded-full p-4"
-            onPress={() => router.push("/subscription")}
-          >
-            <Text className="text-center text-white text-lg font-semibold">
-              Upgrade
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <NewUserPrompt />
+      </EventModal>
+
+      {/* New user prompt with exhausted free streaming */}
+      <EventModal
+        isVisible={newUserExhaustedFree}
+        onClose={() => setNewUserExhaustedFree(false)}
+        height="50%"
+        width="100%"
+        imageSrc={backgroundImage}
+        showHeader={true}
+        title="Eventyzze"
+      >
+        {newUserExhaustedFree && (
+          <StatusBar
+            barStyle="light-content"
+            backgroundColor="transparent"
+            translucent
+          />
+        )}
+        <ExpiredFreeSubscriptionPrompt />
+      </EventModal>
+
+      {/* Users with expired subscriptions */}
+      <EventModal
+        isVisible={userIsExpired}
+        onClose={() => setUserIsExpired(false)}
+        height="50%"
+        width="100%"
+        imageSrc={backgroundImage}
+        showHeader={true}
+        title="Eventyzze"
+      >
+        {userIsExpired && (
+          <StatusBar
+            barStyle="light-content"
+            backgroundColor="transparent"
+            translucent
+          />
+        )}
+        <ExpiredSubscriptionPrompt />
+      </EventModal>
+
+      {/* Already subscribed user */}
+
+      <EventModal
+        isVisible={userIsHost}
+        onClose={() => setUserIsHost(false)}
+        height="50%"
+        width="100%"
+        imageSrc={backgroundImage}
+        showHeader={true}
+        title="Eventyzze"
+      >
+        {userIsHost && (
+          <StatusBar
+            barStyle="light-content"
+            backgroundColor="transparent"
+            translucent
+          />
+        )}
+        <SubscribedUserPrompt />
       </EventModal>
     </View>
   );

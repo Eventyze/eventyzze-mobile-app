@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
-import { storeLocalStorageData } from '../services/axiosSetup/storage';
+import { getLocalStorageData, logoutClear, storeLocalStorageData } from '../services/axiosSetup/storage';
 import { router } from 'expo-router';
+import { userLogout } from '@/services/axiosFunctions/userAxios/userAxios';
 
 interface User {
   id: string;
@@ -15,7 +16,7 @@ interface UserContextType {
   setUser: (user: User | null) => void;
   isAuthenticated: boolean;
   setIsAuthenticated: (value: boolean) => void;
-  logout: () => void;
+  logoutUser: () => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -24,11 +25,18 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const logout = async () => {
+  const logoutUser = async () => {
     try {
-      await storeLocalStorageData('accessToken', '');
-      await storeLocalStorageData('refreshToken', '');
-      await storeLocalStorageData('user', '');
+      const user = await getLocalStorageData('user');
+      if (!user) {
+        console.warn("No user found in storage, skipping logout");
+        return;
+      }
+  
+      const response = await userLogout(user.email);
+      console.log("User logout response:", response);
+  
+      await logoutClear(); // Only clear tokens after confirming logout
       setUser(null);
       setIsAuthenticated(false);
       router.replace('/login');
@@ -36,6 +44,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       console.error('Logout error:', error);
     }
   };
+  
 
   return (
     <UserContext.Provider value={{ 
@@ -43,7 +52,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       setUser, 
       isAuthenticated, 
       setIsAuthenticated,
-      logout 
+      logoutUser 
     }}>
       {children}
     </UserContext.Provider>

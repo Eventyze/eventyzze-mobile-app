@@ -33,18 +33,21 @@ const handleError = async (error: AxiosError | any): Promise<AxiosError> => {
       try {
         return await retryWithNewTokens(error.config) as any;
       } catch (retryError) {
-        await clearClientStorage();
-        redirectToHomePage();
+        console.warn('Token refresh failed:', retryError);
+        await clearClientStorage(); 
+        redirectToLoginPage();
         return Promise.reject(retryError);
       }
     }
 
+    console.warn('No refresh token available, clearing storage');
     await clearClientStorage();
-    redirectToHomePage();
+    redirectToLoginPage();
   }
 
   return Promise.reject(error);
 };
+
 
 const retryWithNewTokens = async (originalConfig: any): Promise<AxiosResponse> => {
   const newAccessToken = await getAccessToken();
@@ -69,32 +72,31 @@ customAxios.interceptors.request.use(
 );
 
 const getAccessToken = async (): Promise<string | null> => {
-  const user = await getLocalStorageData('user');
-  if (user) {
-    const newUser = JSON.parse(user);
-    return newUser.accessToken;
-  }
-  return null;
+  const accessToken = await getLocalStorageData('accessToken');
+  return accessToken;
 };
 
 const getRefreshToken = async (): Promise<string | null> => {
-  const user = await getLocalStorageData('user');
-  if (user) {
-    const newUser = JSON.parse(user);
-    return newUser.refreshToken;
-  }
-  return null;
+  const refreshToken = await getLocalStorageData('refreshToken');
+  return refreshToken;
 };
 
 const storeTokens = async (accessToken: string, refreshToken: string): Promise<void> => {
-  return await storeLocalStorageData('user', { accessToken, refreshToken });
+  try {
+    await storeLocalStorageData('accessToken', accessToken);
+    await storeLocalStorageData('refreshToken', refreshToken);
+    console.log("Tokens successfully stored");
+  } catch (error) {
+    console.error("Error storing tokens:", error);
+  }
 };
+
 
 const clearClientStorage = async (): Promise<void> => {
   return await clearLocalStorage();
 };
 
-const redirectToHomePage = (): void => {
+export const redirectToLoginPage = (): void => {
   router.replace('/login');
 };
 

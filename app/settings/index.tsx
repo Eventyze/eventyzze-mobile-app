@@ -3,9 +3,10 @@ import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, TextInput } fro
 import { router } from 'expo-router';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Footer from '../../components/GeneralComponents/Footer';
-import { clearLocalStorage } from '../../services/axiosSetup/storage';
+import { clearLocalStorage, logoutClear } from '../../services/axiosSetup/storage';
 import Toast from 'react-native-toast-message';
 import LogoutModal from '../../components/Profile/LogoutModal';
+import { useUser } from '@/context/UserContext';
 
 interface SettingItemProps {
   icon: string;
@@ -54,11 +55,17 @@ const SectionHeader: React.FC<{ title: string; subtitle?: string }> = ({ title, 
   </View>
 );
 
+const user = 0;
+
+
 export default function Settings() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
+  const { logoutUser } = useUser()
+
   const handleLogout = async () => {
-    await clearLocalStorage();
+    await logoutClear();
+    logoutUser()
     Toast.show({
       type: 'success',
       text1: 'Good bye, we hope to see you again soon!',

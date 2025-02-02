@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import curve from '../../assets/general/curve.png';
-import { StatusBar } from 'react-native'
+import { StatusBar, Image } from 'react-native'
 
 interface EventModalProps {
   isVisible: boolean;
@@ -45,6 +45,8 @@ const EventModal: React.FC<EventModalProps> = ({
     width,
   };
 
+  
+
   return (
     <RNModal
       animationType="slide"
@@ -58,25 +60,21 @@ const EventModal: React.FC<EventModalProps> = ({
                 resizeMode="cover"
           >
         <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
-            <TouchableWithoutFeedback>         
+            <TouchableWithoutFeedback className='bg-green-800'>         
               <View className="pt-10  mt-20" style={modalStyle}>
-              <ImageBackground source={curve} className="flex-1 pt-14 justify-end"
-              >
+              <ImageBackground source={curve} className="flex-1 pt-10 justify-end">
                 {showHeader && (
                   <View className="p-1 border-b border-gray-200">
-                    <View className="items-center mb-2">
-                      <View className="w-16 h-1 bg-gray-300 rounded-full" />
-                    </View>
 
-                    <View className="flex-row justify-between items-center">
-                      {title && (
-                        <Text
-                          className="text-lg font-semibold"
-                          style={{ fontFamily: 'BarlowBold', color: titleColor }}
-                        >
-                          {title}
-                        </Text>
-                      )}
+                    <View className="flex-row justify-between items-center px-4">
+                <Image
+                  source={require("../../assets/general/eventyzze-logo.png")}
+                  className=""
+                  style={{
+                    width: 50,
+                    height: 50,
+                  }}
+                />  
 
                       {showCloseIcon && (
                         <TouchableOpacity onPress={onClose} className="p-2">

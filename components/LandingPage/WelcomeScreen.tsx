@@ -1,17 +1,19 @@
 import Button from "@/components/Button";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, View, Image, SafeAreaView } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import LandingLeftImage from "../../assets/landingPage/landing-left-image.svg";
-// import LandingTopRightImage from "../../assets/landingPage/landing-top-right-image.svg";
 import LandingBottomRightImage from "../../assets/landingPage/landing-bottom-right-image.svg";
+import { useUser } from "../../context/UserContext";
 
 
 const Welcome = () => {
 
   const [loading, setLoading] = useState<any>(false)
+
+  const { user, setIsAuthenticated } = useUser();
 
   const enter = () => {
     setLoading(true)
@@ -20,6 +22,18 @@ const Welcome = () => {
      return setLoading(false)
     },1000)
   }
+
+  const checkUser = () =>{
+    if(user){
+      setIsAuthenticated(true)
+      return router.push("/login")
+  }
+
+}
+
+  useEffect(() => {
+    checkUser()
+  }, []);
 
   return (
     <SafeAreaView className="flex-1">
