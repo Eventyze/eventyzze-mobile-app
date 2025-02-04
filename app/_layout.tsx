@@ -84,6 +84,10 @@ export default function RootLayout() {
             name="signupRedirect/index"
             options={{ headerShown: false, navigationBarHidden: true }}
           />
+            <Stack.Screen
+            name="create-event/index"
+            options={{ headerShown: false, navigationBarHidden: true }}
+          />
            <Stack.Screen
             name="dashboard/index"
             options={{ headerShown: false, navigationBarHidden: true }}

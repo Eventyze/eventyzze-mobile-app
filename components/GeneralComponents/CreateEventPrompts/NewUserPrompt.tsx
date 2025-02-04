@@ -18,7 +18,7 @@ const NewUserPrompt:React.FC = () => {
         <View className="flex-1 flex-row justify-center items-center px-24 gap-4">
           <TouchableOpacity
             className="bg-white w-full border border-[#FF8038] rounded-full p-4"
-            // onPress={() => router.push("")}
+            onPress={() => router.push("/create-event")}
           >
             <Text className="text-center text-black text-lg font-semibold">
               Continue free

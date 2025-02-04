@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { router, useFocusEffect, usePathname } from "expo-router";
+import { router, useFocusEffect, usePathname, useLocalSearchParams } from "expo-router";
 import Modal from "./Modal";
 import EventModal from "./EventPrompt";
 import backgroundImage from "../../assets/general/prompt-banner.png";
@@ -43,6 +43,10 @@ export default function Footer() {
   );
 
   const createEventRedirect = async () => {
+
+    if(currentPath === '/create-event' || currentPath === '/create-event-event2' || currentPath === '/create-event-event3'){
+      return;
+    }
     setLoading(true);
     const user = await getLocalStorageData("user");
     if (!user.isInitialHostingOfferExhausted) {

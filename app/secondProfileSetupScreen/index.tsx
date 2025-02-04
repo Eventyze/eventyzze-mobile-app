@@ -148,18 +148,10 @@ export default function SecondProfileSetupScreen() {
 
   const params = useLocalSearchParams();
 
-    const profileData = React.useMemo(() => ({
-    userName: params.userName as string,
-    bio: params.bio as string,
-    profileImage: params.profileImage as string,
-  }), [params]);
-
-  const [isCountryModalLoading, setIsCountryModalLoading] = useState(false);
   const [isCountryModalVisible, setIsCountryModalVisible] = useState(false);
   const [isStateModalVisible, setIsStateModalVisible] = useState(false);
   const [countries, setCountries] = useState<any[]>([]);
   const [states, setStates] = useState<any[]>([]);
-  const [isLoadingCountries, setIsLoadingCountries] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [stateSearchQuery, setStateSearchQuery] = useState("");
   const phoneInputRef = useRef<any>(null);
@@ -262,9 +254,6 @@ export default function SecondProfileSetupScreen() {
     });
   };
 
-  const handleCountryLoading = () => {
-    return setIsCountryModalLoading(true);
-  };
   const handleCountrySelect = () => {
     setIsCountryModalVisible(true);
   };
@@ -282,27 +271,6 @@ export default function SecondProfileSetupScreen() {
   const handleBack = () => {
     return router.back();
   };
-
-  // const fetchCountries = async () => {
-  //   setIsLoadingCountries(true);
-  //   setIsCountryModalLoading(true);
-
-  //   try {
-  //     const allCountries = Country.getAllCountries().map(
-  //       (country: ICountry) => ({
-  //         label: country.name,
-  //         value: country.isoCode,
-  //         flag: country.flag,
-  //       })
-  //     );
-  //     setCountries(allCountries);
-  //   } catch (error) {
-  //     console.error("Error loading countries:", error);
-  //   } finally {
-  //     setIsLoadingCountries(false);
-  //     setIsCountryModalLoading(false);
-  //   }
-  // };
 
   const filteredCountries = useMemo(() => {
     return countries.filter(item =>
@@ -391,29 +359,17 @@ export default function SecondProfileSetupScreen() {
                     onPress={() => {
                       handleCountrySelect();
                     }}
-                    disabled={isLoadingCountries}
                     className="mt-2 border border-gray-300 rounded-xl p-6 bg-white"
                   >
-                    {isCountryModalLoading ? (
-                      <View className="flex-row items-center">
-                        <ActivityIndicator size="small" color="#FF8038" />
-                        <Text className="ml-2 text-gray-400">
-                          Loading countries...
-                        </Text>
-                      </View>
-                    ) : (
                       <Text
                         className={
                           formData.country ? "text-black" : "text-gray-400"
                         }
                       >
-                        {isCountryModalLoading
-                          ? "Loading countries..."
-                          : formData.country
+                        {formData.country
                           ? formData.country?.name
                           : "Tap to select country"}
                       </Text>
-                    )}
                   </TouchableOpacity>
             </View>
             <View className="w-full mt-4">
@@ -491,7 +447,7 @@ export default function SecondProfileSetupScreen() {
         title="Select Country"
         searchValue={searchQuery}
         onSearchChange={setSearchQuery}
-        isLoading={isCountryModalLoading}
+        isLoading={false}
       />
 
       <SearchModal

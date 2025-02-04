@@ -5,9 +5,10 @@ interface TextAreaProps {
   placeholder: string;
   value: string;
   onChangeText: (text: string) => void;
+  borderColor?: any;
 }
 
-const TextArea:React.FC<TextAreaProps> = ({placeholder, value, onChangeText}) => {
+const TextArea:React.FC<TextAreaProps> = ({placeholder, value, onChangeText, borderColor}) => {
   // const [text, setText] = useState("");
 
   // const handleChange = (input:string) => {
@@ -19,7 +20,9 @@ const TextArea:React.FC<TextAreaProps> = ({placeholder, value, onChangeText}) =>
 
   return (
     <View className="w-full">
-      <View className="h-40 border border-gray-300 rounded-lg">
+      <View className="h-40 border rounded-lg"
+      style={{borderColor: borderColor ? borderColor : "#C9C9C9"}}
+      >
       <TextInput
         className="p-3 text-base text-black"
         value={value}
