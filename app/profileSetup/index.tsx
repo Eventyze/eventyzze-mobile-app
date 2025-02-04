@@ -278,6 +278,7 @@ export default function ProfileSetup() {
                       setProfileImage(null);
                       setIsLoading(false);
                     }}
+                    disabled={isLoading}
                   />
                   <Button
                     title={isLoading ? "Saving..." : "Save"}

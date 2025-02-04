@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -22,18 +22,17 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
 import PhoneInput from "react-native-phone-input";
-import { Country, State } from "country-state-city";
-import type { ICountry } from "country-state-city";
+import countriesData from '../../data/countries_states.json';
 
 interface CountryItem {
-  label: string;
-  value: string;
-  flag: string;
+  name: string;
+  code: string;
+  flag?: string;
 }
 
 interface StateItem {
-  label: string;
-  value: string;
+  name: string;
+  code: string;
 }
 
 interface SearchModalProps {
@@ -113,7 +112,7 @@ const SearchModal = ({
         ) : (
           <FlatList
             data={data}
-            keyExtractor={(item: any) => item.value}
+            // keyExtractor={(item: any) => item.value}
             renderItem={({ item }: { item: any }) => (
               <TouchableOpacity
                 className="px-4 py-4 border-b border-gray-100"
@@ -124,7 +123,7 @@ const SearchModal = ({
               >
                 <Text className="text-base">
                   {item.flag ? `${item.flag} ` : ""}
-                  {item.label}
+                  {item.name}
                 </Text>
               </TouchableOpacity>
             )}
@@ -158,16 +157,26 @@ export default function SecondProfileSetupScreen() {
   const [isCountryModalLoading, setIsCountryModalLoading] = useState(false);
   const [isCountryModalVisible, setIsCountryModalVisible] = useState(false);
   const [isStateModalVisible, setIsStateModalVisible] = useState(false);
-  const [countries, setCountries] = useState<CountryItem[]>([]);
-  const [states, setStates] = useState<StateItem[]>([]);
+  const [countries, setCountries] = useState<any[]>([]);
+  const [states, setStates] = useState<any[]>([]);
   const [isLoadingCountries, setIsLoadingCountries] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [stateSearchQuery, setStateSearchQuery] = useState("");
   const phoneInputRef = useRef<any>(null);
-  const [myCountryPicker, setMyCountryPicker] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState("ng");
   const debouncedCountrySearch = useDebouncedValue(searchQuery, 300);
   const debouncedStateSearch = useDebouncedValue(stateSearchQuery, 300);
+
+
+  useEffect(() => {
+    setCountries(
+      countriesData.map((country:any) => ({
+        name: country.name,
+        code: country.code,
+        flag: country.flag
+      }))
+    );
+  }, []);
+
 
   const handlePhoneChange = (text: string) => {
     setFormData((prev) => ({
@@ -176,29 +185,22 @@ export default function SecondProfileSetupScreen() {
     }));
   };
 
-  const handleCountryChange = (item: CountryItem): void => {
-    setFormData((prev) => ({
+
+  const handleCountryChange = useCallback((item: CountryItem) => {
+    setFormData(prev => ({
       ...prev,
       country: item,
-      state: null,
+      state: null
     }));
+    const countryStates = countriesData.find(country => country.name === item.name)?.states || [];
+    setStates(countryStates.map(state => ({ name: state.name, code: state.code })));
+  }, [])
 
-    const countryStates: StateItem[] = State.getStatesOfCountry(item.value).map(
-      (state) => ({
-        label: state.name,
-        value: state.isoCode,
-      })
-    );
-    setStates(countryStates);
+
+
+  const handleStateChange = (item: StateItem) => {
+    setFormData(prev => ({ ...prev, state: item }));
   };
-
-  const handleStateChange = (item: StateItem): void => {
-    setFormData((prev) => ({
-      ...prev,
-      state: item,
-    }));
-
-  }
 
   const handleNext = () => {
     if (!formData.phoneNumber.trim()) {
@@ -251,11 +253,11 @@ export default function SecondProfileSetupScreen() {
         profileImage: params.profileImage as string,
         phone: formData.phoneNumber as string,
         fullName: formData.fullName as string,
-        country: formData.country.label as string,
-        state: formData.state.label as string,
+        country: formData.country.name as string,
+        state: formData.state.name as string,
         address: formData.address as string,
-        stateCode: formData.state.value as string,
-        countryCode: formData.country.value as string,
+        stateCode: formData.state.code as string,
+        countryCode: formData.country.code as string,
       },
     });
   };
@@ -264,9 +266,6 @@ export default function SecondProfileSetupScreen() {
     return setIsCountryModalLoading(true);
   };
   const handleCountrySelect = () => {
-    if (!countries.length) {
-      fetchCountries();
-    }
     setIsCountryModalVisible(true);
   };
 
@@ -284,36 +283,36 @@ export default function SecondProfileSetupScreen() {
     return router.back();
   };
 
-  const fetchCountries = async () => {
-    setIsLoadingCountries(true);
-    setIsCountryModalLoading(true);
+  // const fetchCountries = async () => {
+  //   setIsLoadingCountries(true);
+  //   setIsCountryModalLoading(true);
 
-    try {
-      const allCountries = Country.getAllCountries().map(
-        (country: ICountry) => ({
-          label: country.name,
-          value: country.isoCode,
-          flag: country.flag,
-        })
-      );
-      setCountries(allCountries);
-    } catch (error) {
-      console.error("Error loading countries:", error);
-    } finally {
-      setIsLoadingCountries(false);
-      setIsCountryModalLoading(false);
-    }
-  };
+  //   try {
+  //     const allCountries = Country.getAllCountries().map(
+  //       (country: ICountry) => ({
+  //         label: country.name,
+  //         value: country.isoCode,
+  //         flag: country.flag,
+  //       })
+  //     );
+  //     setCountries(allCountries);
+  //   } catch (error) {
+  //     console.error("Error loading countries:", error);
+  //   } finally {
+  //     setIsLoadingCountries(false);
+  //     setIsCountryModalLoading(false);
+  //   }
+  // };
 
   const filteredCountries = useMemo(() => {
-    return countries.filter((item) =>
-      item.label.toLowerCase().includes(debouncedCountrySearch.toLowerCase())
+    return countries.filter(item =>
+      item.name.toLowerCase().includes(debouncedCountrySearch.toLowerCase())
     );
   }, [countries, debouncedCountrySearch]);
 
   const filteredStates = useMemo(() => {
-    return states.filter((item) =>
-      item.label.toLowerCase().includes(debouncedStateSearch.toLowerCase())
+    return states.filter(item =>
+      item.name.toLowerCase().includes(debouncedStateSearch.toLowerCase())
     );
   }, [states, debouncedStateSearch]);
 
@@ -336,6 +335,22 @@ export default function SecondProfileSetupScreen() {
           <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
         <View className="pt-7 pb-6 px-4">
           <Animated.View className="flex-col justify-between items-start w-full">
+          <View className="w-full mt-4">
+                  <Text
+                    className="text-2xl"
+                    style={{ fontFamily: "BarlowBold" }}
+                  >
+                Full Name
+              </Text>
+              <InputField 
+                placeholder="eg: John Doe" 
+                width="100%" 
+                    value={formData.fullName}
+                    onChange={(text) =>
+                      setFormData((prev) => ({ ...prev, fullName: text }))
+                    }
+              />
+            </View>
             <View className="w-full">
                   <Text
                     className="text-2xl"
@@ -349,7 +364,7 @@ export default function SecondProfileSetupScreen() {
                   >
                     <PhoneInput
                       ref={phoneInputRef}
-                      initialCountry={selectedCountry}
+                      initialCountry={"ng"}
                       // initialValue="+2343178675309"
                       textProps={{
                         placeholder: "Enter a phone number...",
@@ -370,27 +385,10 @@ export default function SecondProfileSetupScreen() {
                     className="text-2xl"
                     style={{ fontFamily: "BarlowBold" }}
                   >
-                Full Name
-              </Text>
-              <InputField 
-                placeholder="eg: John Doe" 
-                width="100%" 
-                    value={formData.fullName}
-                    onChange={(text) =>
-                      setFormData((prev) => ({ ...prev, fullName: text }))
-                    }
-              />
-            </View>
-            <View className="w-full mt-4">
-                  <Text
-                    className="text-2xl"
-                    style={{ fontFamily: "BarlowBold" }}
-                  >
-                Country
+                Select your country
               </Text>
                   <TouchableOpacity
                     onPress={() => {
-                      handleCountryLoading();
                       handleCountrySelect();
                     }}
                     disabled={isLoadingCountries}
@@ -412,7 +410,7 @@ export default function SecondProfileSetupScreen() {
                         {isCountryModalLoading
                           ? "Loading countries..."
                           : formData.country
-                          ? formData.country?.label
+                          ? formData.country?.name
                           : "Tap to select country"}
                       </Text>
                     )}
@@ -423,7 +421,7 @@ export default function SecondProfileSetupScreen() {
                     className="text-2xl"
                     style={{ fontFamily: "BarlowBold" }}
                   >
-                State
+                SSelect your state
               </Text>
                   <TouchableOpacity
                     onPress={() => handleStateLoading()}
@@ -435,7 +433,7 @@ export default function SecondProfileSetupScreen() {
                         formData.state ? "text-black" : "text-gray-400"
                       }
                     >
-                      {formData.state?.label || "Tap to select state"}
+                      {formData.state?.name || "Tap to select state"}
                     </Text>
                   </TouchableOpacity>
             </View>
@@ -485,7 +483,6 @@ export default function SecondProfileSetupScreen() {
       <SearchModal
         visible={isCountryModalVisible}
         onClose={() => {
-          setIsCountryModalLoading(false);
           setIsCountryModalVisible(false);
         }}
         data={filteredCountries}
@@ -494,7 +491,7 @@ export default function SecondProfileSetupScreen() {
         title="Select Country"
         searchValue={searchQuery}
         onSearchChange={setSearchQuery}
-        isLoading={isLoadingCountries}
+        isLoading={isCountryModalLoading}
       />
 
       <SearchModal
@@ -506,7 +503,7 @@ export default function SecondProfileSetupScreen() {
         title="Select State"
         searchValue={stateSearchQuery}
         onSearchChange={setStateSearchQuery}
-        isLoading={isLoadingCountries}
+        isLoading={false}
       />
     </SafeAreaView>
   );

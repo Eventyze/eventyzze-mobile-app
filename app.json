@@ -6,6 +6,8 @@
     "orientation": "portrait",
     "icon": "./assets/general/eventyze-logo.png",
     "scheme": "myapp",
+    "platforms": ["ios", "android"],
+    "deeplink": "myapp://",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -16,7 +18,19 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/general/eventyze-logo.png",
-        "backgroundColor": "#000000"
+        "backgroundColor": "#000000",
+        "intentFilters": [
+          {
+            "action": "VIEW",
+            "data": [
+              {
+                "scheme": "myapp",
+                "host": "payment-callback"
+              }
+            ],
+            "category": ["BROWSABLE", "DEFAULT"]
+          }
+        ]
       },
       "package": "com.eventyzze.app",
       "scheme": "myapp",

@@ -4,6 +4,8 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../../components/Button';
 import Toast from 'react-native-toast-message';
+import axios from 'axios';
+import * as Linking from "expo-linking";
 
 // Payment options data
 const paymentOptions = [
@@ -14,14 +16,14 @@ const paymentOptions = [
     balance: 1000,
     description: 'Pay with your wallet balance',
   },
+  // {
+  //   id: 2,
+  //   name: 'Bank Transfer',
+  //   icon: 'card-outline',
+  //   description: 'Direct bank transfer',
+  // },
   {
     id: 2,
-    name: 'Bank Transfer',
-    icon: 'card-outline',
-    description: 'Direct bank transfer',
-  },
-  {
-    id: 3,
     name: 'Pay with card',
     icon: 'cash-outline',
     description: 'Pay with card via Paystack',
@@ -41,26 +43,18 @@ export default function PaymentOptions() {
 
     setIsProcessing(true);
     try {
-      // Simulate payment processing
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          // Simulate random success/failure
-          if (Math.random() > 0.5) {
-            resolve(true);
-          } else {
-            reject(new Error('Payment failed'));
-          }
-        }, 2000);
+      console.log(selectedOption)
+      if(selectedOption === 2){
+        const response = await axios.post("https://your-backend.com/api/payments", {
+          amount: 5000, // Example amount
+          currency: "NGN",
+          email: "user@example.com",
       });
 
-      // If successful, navigate to success screen
-      router.push({
-        pathname: '/payment/success',
-        params: {
-          planName,
-          price,
-        }
-      });
+      if (response.data.payment_url) {
+          Linking.openURL(response.data.payment_url); // Open Flutterwave page
+      }
+      }
     } catch (error) {
       // If failed, navigate to failure screen
       router.push({
