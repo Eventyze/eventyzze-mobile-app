@@ -289,6 +289,7 @@ export default function SecondProfileSetupScreen() {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
+        className="mb-10"
       >
         <View className="flex bg-white pb-4 shadow-gray-600 px-4 mt-20">
         <Animated.View className="flex-row gap-2 items-center">
@@ -319,7 +320,7 @@ export default function SecondProfileSetupScreen() {
                     }
               />
             </View>
-            <View className="w-full">
+            <View className="w-full mt-4">
                   <Text
                     className="text-2xl"
                     style={{ fontFamily: "BarlowBold" }}
@@ -377,7 +378,7 @@ export default function SecondProfileSetupScreen() {
                     className="text-2xl"
                     style={{ fontFamily: "BarlowBold" }}
                   >
-                SSelect your state
+                Select your state
               </Text>
                   <TouchableOpacity
                     onPress={() => handleStateLoading()}

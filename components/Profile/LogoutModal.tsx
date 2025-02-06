@@ -32,7 +32,7 @@ const LogoutModal: React.FC<LogoutModalProps> = ({ visible, onClose, onLogout })
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={onLogout}
+              onPress={()=> {onLogout(); onClose()}}
               className="flex-1 py-3 rounded-lg bg-[#DFEDD3]"
             >
               <Text className="text-center text-[#319F43] font-semibold text-lg">

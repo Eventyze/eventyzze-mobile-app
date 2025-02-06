@@ -2,7 +2,11 @@ import { View, Text, TouchableOpacity, StatusBar } from "react-native";
 import React, { useCallback, useState, useEffect } from "react";
 import { router, useFocusEffect, usePathname } from "expo-router";
 
-const SubscribedUserPrompt:React.FC = () => {
+interface HostProps {
+  onClose: () => void | any;
+}
+
+const SubscribedUserPrompt:React.FC<HostProps> = ({ onClose }) => {
     return (
         <View className="h-full w-full">
         <Text className="text-center text-xl font-semibold">
