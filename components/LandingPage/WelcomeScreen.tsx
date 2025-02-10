@@ -18,7 +18,7 @@ const Welcome = () => {
   const enter = () => {
     setLoading(true)
     setTimeout(()=>{
-      router.push("/signup")
+      router.push("/dashboard")
      return setLoading(false)
     },1000)
   }

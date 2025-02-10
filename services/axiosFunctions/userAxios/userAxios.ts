@@ -213,6 +213,33 @@ export const checkUserNameAvailability = async(userName:string) => {
       return error.response;
       }
 }
+
+export const fetchAllHosts = async() => {
+  try {
+    const response = await axios.get(`/host/get-all-hosts`);
+    return response;
+    } catch (error: any) {
+      return error.response;
+    }
+}
+
+export const fetchLiveEvents = async() => {
+  try {
+    const response = await axios.get(`/users/live-events`);
+    return response;
+    } catch (error: any) {
+      return error.response;
+    }
+}
+
+export const fetchAllEvents = async() => {
+  try {
+    const response = await axios.get(`/users/all-events`);
+    return response;
+    } catch (error: any) {
+      return error.response;
+    }
+}
 // export const userLogoutForce = async () => {
 //   try {
 //     const response = await axios.post("/auth/logout");
