@@ -7,7 +7,7 @@ import EmptyState from '@/components/EmptyState';
 import Footer from '../../components/GeneralComponents/Footer';
 import { MaterialIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
-import { fetchAllHosts, fetchLiveEvents } from '@/services/axiosFunctions/userAxios/userAxios';
+import { fetchAllHosts, fetchLiveEvents, fetchTrendingEvents } from '@/services/axiosFunctions/userAxios/userAxios';
 import Loading from '@/components/GeneralComponents/Loading';
 
 // import {} from '../../assets/dashboard'
@@ -137,32 +137,32 @@ const recommendedShows = [
 
 interface liveShowsData {
   id: string;
-  title: string;
-  artist: string;
-  image: string;
+  eventTitle: string;
+  ownerName: string;
+  coverImage: any;
   isLive: boolean;
 };
 
-interface recommendedShowsData {
+interface trendingShowsData {
   id: string;
-  title: string;
-  artist: string;
-  image: string;
+  eventTitle: string;
+  ownerName: string;
+  coverImage: any;
 }
-
+//userName
 interface hostData {
   id: string;
-  name: string;
-  image: string;
+  userName: string;
+  userImage: any;
 }
 
 export default function Dashboard() {
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [databaseLiveShows, setDatabaseLiveShows] = useState<liveShowsData[]>([])
-  const [databaseRecommendedShows, setDatabaseRecommendedShows] = useState<recommendedShowsData[]>([])
   const [newHosts, setNewHosts] = useState<hostData[]>([])
   const [loading, setLoading] = useState(false)
-    const [refreshing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [trendingShows, setTrendingShows] = useState<trendingShowsData[]>([])
 
 
   const getAllHosts = async() => {
@@ -172,12 +172,9 @@ export default function Dashboard() {
     } 
     try{
       const data = await fetchAllHosts()
-      setNewHosts(data.data.data.hosts)
+      setNewHosts(data.data.data)
     }catch (error: any) {
-      return Toast.show({
-        type: 'error',
-        text1: error.message || 'An error occurred. Please swipe down to refresh.',
-      });
+      console.error(error.message)
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -187,8 +184,20 @@ export default function Dashboard() {
   const getLiveEvents = async() => {
     try{
       const data = await fetchLiveEvents()
+      setDatabaseLiveShows(data.data.data)
+    }catch (error: any) {
+     console.error(error.message)
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }
+
+  const getTrendingEVents = async() => {
+    try{
+      const data = await fetchTrendingEvents()
       console.log(data.data)
-      setDatabaseLiveShows(data.data.data.events)
+      setTrendingShows(data.data.data)
     }catch (error: any) {
      console.error(error.message)
     } finally {
@@ -200,13 +209,14 @@ export default function Dashboard() {
   useEffect(()=> {
     getAllHosts()
     getLiveEvents()
-    setDatabaseRecommendedShows(recommendedShows)
+    getTrendingEVents()
   },[])
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     getAllHosts();
     getLiveEvents()
+    getTrendingEVents()
   }, []);
 
   return (
@@ -230,16 +240,16 @@ export default function Dashboard() {
     {!newHosts.length ? 
           (
           <View>
-            <Text className='text-lg font-bold'>No hosts yet, upgrade to a host to trend here!! 😊</Text>
+            <Text className='text-lg font-bold'>No hosts yet, upgrade to a host and trend here!! 😊</Text>
           </View>
           ):(
           <>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {hosts.map((host) => (
+            {newHosts.map((host) => (
               <TouchableOpacity key={host.id} className="mr-4">
                   <View className="bg-white rounded-full p-[2px]">
                     <Image
-                      source={host.image}
+                      source={{uri: host.userImage}}
                       className="w-14 h-14 rounded-full"
                     />
                   </View>
@@ -251,11 +261,13 @@ export default function Dashboard() {
         </View>
 
       {!databaseLiveShows.length ? (
+        <View className='mb-20'>
       <EmptyState
         icon={<MaterialIcons name="inbox" size={50} color="#FF8038" />}
         heading="No Live Shows currently"
         body="You can host a live show and others can see it here 😊"
       />
+      </View>
     ): (
       <>
 
@@ -270,13 +282,13 @@ export default function Dashboard() {
             </TouchableOpacity>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="rounded-lg">
-            {liveShows.map((show) => (
+            {databaseLiveShows.map((show) => (
               <TouchableOpacity 
                 key={show.id}
                 className="mr-4 relative rounded-lg"
               >
                 <Image
-                  source={show.image}
+                  source={{uri: show.coverImage}}
                   className="w-[220px] h-[323px] rounded-lg"
                 />
                 <View className="absolute top-2 left-2 bg-red-500 px-2 py-1 rounded">
@@ -286,8 +298,8 @@ export default function Dashboard() {
                   colors={['transparent', 'rgba(0,0,0,0.8)']}
                   className="absolute bottom-0 left-0 right-0 h-20 rounded-b-lg p-3"
                 >
-                  <Text className="text-white font-semibold">{show.title}</Text>
-                  <Text className="text-white text-sm opacity-80">{show.artist}</Text>
+                  <Text className="text-white font-semibold">{show.eventTitle}</Text>
+                  <Text className="text-white text-sm opacity-80">{show.ownerName}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             ))}
@@ -320,7 +332,7 @@ export default function Dashboard() {
           </ScrollView>
         </View>
 
-            {!databaseRecommendedShows.length ? (
+        {!trendingShows.length ? (
       <View className='mb-20'>
         <EmptyState
         icon={<MaterialIcons name="inbox" size={50} color="#FF8038" />}
@@ -332,18 +344,18 @@ export default function Dashboard() {
         {/* Scrollable Shows List */}
 
         <View className="px-4 pb-20">
-          {recommendedShows.map((show) => (
+          {trendingShows.map((show) => (
             <TouchableOpacity 
               key={show.id}
               className="flex-row items-center mb-4"
             >
               <Image
-                source={show.image}
+                source={{uri: show.coverImage}}
                 className="w-[130px] h-32 rounded-lg"
               />
               <View className="flex-1 ml-3">
-                <Text className="text-base font-semibold">{show.title}</Text>
-                <Text className="text-sm text-gray-600">{show.artist}</Text>
+                <Text className="text-base font-semibold">{show.eventTitle}</Text>
+                <Text className="text-sm text-gray-600">{show.ownerName}</Text>
               </View>
             </TouchableOpacity>
           ))}

@@ -17,10 +17,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { getLocalStorageData } from "@/services/axiosSetup/storage";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { useEvent } from "expo";
-import { StyleSheet, Button } from "react-native";
+import { StyleSheet } from "react-native";
 import Loading from "@/components/GeneralComponents/Loading";
 import Footer from "@/components/GeneralComponents/Footer";
 import { formatDate } from '../../utilities/utilities';
+import Button from "../../components/Button";
 
 // import { getLocalStorageData } from '@/services/axiosSetup/storage';
 // import RNFS from 'react-native-fs';
@@ -45,6 +46,9 @@ const Event2 = () => {
   const [loading, setLoading] = useState(false)
 
   const [isSetEvent, setIsSetEvent] = useState(false)
+
+  const [isContinueLoading, setIsContinueLoading] = useState(false)
+
 
   const [eventData, setEventData] = useState({
     videoUrl: "",
@@ -82,7 +86,7 @@ const Event2 = () => {
 
     setIsSetEvent(!!hasAllParams);
     }
-console.log('dae',params.startDate)
+
     loadDataFromParams()
   },[isSetEvent])
 
@@ -106,7 +110,7 @@ console.log('dae',params.startDate)
         <View className="">
           <Image
             source={{ uri: item.source }}
-            style={{ width: "100%", height: 250, borderRadius: 10 }}
+            style={{ width: "80%", height: 250, borderRadius: 10, }}
             resizeMode="cover"
             className=""
           />
@@ -116,11 +120,12 @@ console.log('dae',params.startDate)
       return (
         <View
           style={{
-            width: "100%",
+            width: "93%",
             height: 250,
             borderRadius: 10,
             overflow: "hidden",
           }}
+          className="top-0"
         >
           <VideoView
             player={item.source}
@@ -132,20 +137,21 @@ console.log('dae',params.startDate)
   };
 
   const handleContinue = () => {
-    // router.push("/dashboard");
+
+    setIsContinueLoading(true)
+    router.push("/dashboard");
+    return setIsContinueLoading(false)
+
   };
 
   return (
     <SafeAreaView className="bg-white mb-10">
-      <Text
-        className="pl-4 pr-4 pt-4 pb-2 text-2xl"
-        style={{ fontFamily: "BarlowBold" }}
-      >
-        Event Details
-      </Text>
       <ScrollView className="">
         <StatusBar style="auto" />
-        <View className="mt-4">
+        <View className="mt-4 pl-4 pr-4">
+        <View className="rounded-2xl bg-[#CACACA]"
+        style={{borderColor: "#CACACA", borderWidth: 10, borderStyle: 'solid'}}
+        >
           {/* Event Image */}
           {!isSetEvent ? (
             <View className="flex p-4">
@@ -158,71 +164,100 @@ console.log('dae',params.startDate)
               horizontal={true}
               pagingEnabled
               showsHorizontalScrollIndicator={true}
-              className=" bg-gray-300"
+              className=""
               contentContainerStyle={{
                 flexDirection: "row",
-                justifyContent: "center",
-                alignContent: "center",
-                alignItems: "center",
-                paddingRight: 10,
-                paddingLeft: 10,
-                paddingTop: 10,
-                paddingBottom: 10,
+                // justifyContent: "center",
+                // alignContent: "center",
+                // alignItems: "center",
+
               }}
+              style={{ borderBottomWidth: 10, borderBottomColor: "#CACACA" }}
             >
               {carouselItems.map((item, index) => (
                 <View
                   key={index}
-                  style={{ width: width * 0.9, marginHorizontal: 5 }}
+                  style={{ width: width * 0.93, marginHorizontal: 0 }}
                 >
                   {renderItem({ item })}
                 </View>
               ))}
             </ScrollView>
           )}
+          <View className="bg-white rounded-b-xl">
           {isSetEvent && 
           <Text
-            className="mt-2 pl-4 pr-4 text-[#FF8038]"
+            className="mt-2 pl-2 flex justify-center text-center pr-2 text-[#FF8038] bg-white"
             style={{ fontFamily: "BarlowSemiBold" }}
           >
-            {"<<<<<Swipe to toggle between Event Banner & Ad-Video>>>>>"}
+            {"<< Swipe to toggle between Event Banner & Ad-Video >>"}
           </Text>
           }
           {/* Event Title */}
-          <Text className="text-2xl pl-4 pr-4 mt-6 font-bold text-black mb-2">
+          <Text className="text-3xl pl-4 text-center bg-white pr-4 mt-6 font-bold text-black mb-2"
+          style={{ fontFamily: "BarlowBold" }}
+          >
             {eventData.title || "Loading event title..."}
           </Text>
 
           {/* Event Date & Time */}
-          <Text className="text-lg pl-4 pr-4 text-gray-500 mb-2">
-          {formatDate(eventData.startDate) || "Loading event date..."} | {eventData.time || "Loading event time..."}
+          <Text className="text-2xl pl-4 pr-4 text-center bg-white text-gray-500 mb-2">
+          {formatDate(eventData.startDate) || "Loading event date..."}
           </Text>
 
-          <Text className="text-lg pl-4 pr-4 text-gray-500 mb-2">
-          {eventData.currency || "Loading event cost currency..."} | {eventData.cost || "Loading cost..."}
+          <Text className="text-2xl pl-4 pr-4 text-center bg-white text-gray-500 mb-2">
+           {`${eventData.time} (Prompt)` || "Loading event time..."}
           </Text>
-
+          <View className="h-1 border-b border-dashed border-gray-500 ml-6 mr-6"></View>
           {/* Event Description */}
-          <Text className="text-base pl-4 pr-4 text-gray-700 mb-4">
+          <Text className="text-xl pl-4 pr-4 text-center bg-white text-gray-700 mb-4">
           {eventData.description || "Loading event description..."}
             {/* <Text className="text-blue-500"> Read More</Text> */}
           </Text>
 
-          {/* Confirm Button */}
-          <TouchableOpacity
-            onPress={handleContinue}
-            className="bg-[#FF8038] ml-4 mr-4 p-4 mb-20 rounded-md items-center"
+          <Text className="text-3xl pl-4 mt-6 mb-10 text-center pr-4 bg-white"
+          style={{fontFamily: "BarlowBold"}}
           >
-            <Text className="text-white font-bold text-lg">Confirm</Text>
-          </TouchableOpacity>
+          {eventData.cost || "Loading cost..."} {eventData.currency || "Loading event cost currency..."} 
+          </Text>
 
-      <TouchableOpacity className="bg-blue-600 text-center justify-center ml-4 mr-4 p-4 mb-20 rounded-md items-center">
-        <Text className="text-white font-bold text-center text-lg">Share</Text>
-      </TouchableOpacity>
+          </View>
+          </View>
+
+          <View>
+            <Text className="mt-4 text-3xl text-center font-bold"
+            style={{ fontFamily: "BarlowBold" }}
+            >
+              Event Created Successfully!
+            </Text>
+          </View>
+
+
+          {/* Confirm Button */}
+
+          <View>
+          <Button
+            title={isContinueLoading ? "Loading..." : "Continue"}
+            gradientPadding={1}
+            gradientColors={["#FF8038", "#FF8038", "#FF8038"]}
+            buttonColour={"#FF8038"}
+            buttonWidth={"full"}
+            action={handleContinue}
+            disabled={isContinueLoading}
+          />
+          <Button
+            title={"Share"}
+            gradientPadding={1}
+            gradientColors={["#FF8038", "#FF8038", "#FF8038"]}
+            buttonColour={"#FF8038"}
+            buttonWidth={"full"}
+            disabled={isContinueLoading}
+          />
+        </View>
         </View>
       </ScrollView>
-      <Footer />
       { !isSetEvent && <Loading isTransparent={false}/> }
+      <Footer />
     </SafeAreaView>
   );
 };

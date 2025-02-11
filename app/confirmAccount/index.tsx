@@ -13,13 +13,12 @@ export default function Otp() {
   const [otp, setOtp] = useState(["", "", "", "", ""]);
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
-  const [timer, setTimer] = useState(300); // 5 minutes in seconds
-  const [resendTimer, setResendTimer] = useState(0); // Resend cooldown timer
+  const [timer, setTimer] = useState(300);
+  const [resendTimer, setResendTimer] = useState(0);
   const inputs: any = Array.from({ length: 5 }).map(() => useRef(null));
 
   const [ userEmail, setUserEmail ] = useState<string>("");
 
-  // Timer effect for OTP expiration
   useEffect(() => {
     if (timer > 0) {
       const interval = setInterval(() => {
@@ -37,7 +36,6 @@ export default function Otp() {
     fetchEmail();
   }, []);
 
-  // Timer effect for resend cooldown
   useEffect(() => {
     if (resendTimer > 0) {
       const interval = setInterval(() => {
@@ -88,7 +86,7 @@ export default function Otp() {
           type: 'success',
           text1: response.data?.message || 'OTP verified successfully!',
         });
-        router.push('/login');
+        router.push('/profileSetup');
       } else {
         Toast.show({
           type: 'error',

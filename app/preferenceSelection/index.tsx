@@ -5,6 +5,7 @@ import Button from "../../components/Button";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { router, useLocalSearchParams } from "expo-router";
 import Toast from "react-native-toast-message";
+import * as Device from 'expo-device';
 import { updateProfileFirstime } from "../../services/axiosFunctions/userAxios/userAxios";
 
 export default function Preferences() {
@@ -25,10 +26,10 @@ export default function Preferences() {
   }), [params]);
 
   const options: string[] = React.useMemo(() => [
-    "Live concerts", "Live sport matches", "Technology", "Gaming", "Science", 
-    "Networking", "Fashion", "Beauty", "Fitness classes", "Art", "Cultural events", 
+    "Concerts", "Sport", "Technology", "Gaming", "Science", 
+    "Networking", "Fashion", "Beauty", "Fitness", "Art", "Cultural events", 
     "Literature", "Seminars", "Nature", "Charity", "Cooking", "Dance", "Travel", 
-    "Movie premier", "Film festivals",
+    "Movies", "Music and Entertainment", "Films and Festivals", "Other"
   ], []);
 
   const toggleSelection = useCallback((option: string) => {
@@ -40,7 +41,6 @@ export default function Preferences() {
   }, []);
 
   const handleNext = useCallback(async () => {
-    console.log('prof', profileData)
     if (selectedOptions.length === 0) {
       Toast.show({
         type: 'error',
@@ -51,10 +51,15 @@ export default function Preferences() {
 
     setIsLoading(true);
     try {
+      const deviceId = Device.osInternalBuildId;
+
       const userData = {
         ...profileData,
+        deviceId,
         interests: selectedOptions
       };
+
+      console.log('use',userData)
       const response = await updateProfileFirstime(userData);
 
       if (response.status === 200) {

@@ -240,6 +240,15 @@ export const fetchAllEvents = async() => {
       return error.response;
     }
 }
+
+export const fetchTrendingEvents = async() => {
+  try {
+    const response = await axios.get(`/users/trending-events`);
+    return response;
+    } catch (error: any) {
+      return error.response;
+    }
+}
 // export const userLogoutForce = async () => {
 //   try {
 //     const response = await axios.post("/auth/logout");
