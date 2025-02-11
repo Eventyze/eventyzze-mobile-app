@@ -173,6 +173,7 @@ export default function Dashboard() {
     try{
       const data = await fetchAllHosts()
       setNewHosts(data.data.data)
+      console.log('yesir',data.data)
     }catch (error: any) {
       console.error(error.message)
     } finally {
@@ -196,7 +197,6 @@ export default function Dashboard() {
   const getTrendingEVents = async() => {
     try{
       const data = await fetchTrendingEvents()
-      console.log(data.data)
       setTrendingShows(data.data.data)
     }catch (error: any) {
      console.error(error.message)
@@ -285,22 +285,25 @@ export default function Dashboard() {
             {databaseLiveShows.map((show) => (
               <TouchableOpacity 
                 key={show.id}
-                className="mr-4 relative rounded-lg"
+                className="mr-4 rounded-xl bg-red-900 relative"
               >
+                <View className='rounded-xl'>
                 <Image
                   source={{uri: show.coverImage}}
-                  className="w-[220px] h-[323px] rounded-lg"
+                  className="w-[220px] h-[323px] rounded-xl"
+                  resizeMode="stretch"
                 />
-                <View className="absolute top-2 left-2 bg-red-500 px-2 py-1 rounded">
-                  <Text className="text-white text-xs">LIVE</Text>
                 </View>
-                <LinearGradient
+                {/* <View className="absolute top-2 left-2 bg-red-500 px-2 py-1 rounded">
+                  <Text className="text-white text-xs">LIVE</Text>
+                </View> */}
+                {/* <LinearGradient
                   colors={['transparent', 'rgba(0,0,0,0.8)']}
-                  className="absolute bottom-0 left-0 right-0 h-20 rounded-b-lg p-3"
+                  className="absolute bottom-0 left-0 right-0 h-20 rounded-xl p-3"
                 >
-                  <Text className="text-white font-semibold">{show.eventTitle}</Text>
-                  <Text className="text-white text-sm opacity-80">{show.ownerName}</Text>
-                </LinearGradient>
+                  <Text className="text-white rounded-xl font-semibold">{show.eventTitle}</Text>
+                  <Text className="text-white rounded-xl text-sm opacity-80">{show.ownerName}</Text>
+                </LinearGradient> */}
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -352,6 +355,7 @@ export default function Dashboard() {
               <Image
                 source={{uri: show.coverImage}}
                 className="w-[130px] h-32 rounded-lg"
+                resizeMode="stretch"
               />
               <View className="flex-1 ml-3">
                 <Text className="text-base font-semibold">{show.eventTitle}</Text>

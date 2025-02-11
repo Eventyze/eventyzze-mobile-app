@@ -18,6 +18,7 @@ interface InputFieldProps {
     isActivity?: boolean;
     isOkay?:boolean;
     isNotOkay?: boolean;
+    maxLength?: number;
 }
 
 const styles = StyleSheet.create({
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const InputField:React.FC<InputFieldProps> = ({textWidth, borderSize, disabled, secureTextEntry = false, value, textAlign, placeholder, onChange, width, borderColor, keyboardType, isActivity, isOkay, isNotOkay}: InputFieldProps) => {
+export const InputField:React.FC<InputFieldProps> = ({textWidth, borderSize, disabled, secureTextEntry = false, value, textAlign, placeholder, onChange, width, borderColor, keyboardType, isActivity, isOkay, isNotOkay, maxLength}: InputFieldProps) => {
 
     return(
         <View className={`flex-row w-full items-center ${borderSize ? `border-${borderSize}` : 'border'} rounded-xl px-2 py-1 mt-4`}
@@ -43,6 +44,7 @@ export const InputField:React.FC<InputFieldProps> = ({textWidth, borderSize, dis
           onChangeText={onChange}
           placeholder={placeholder}
           value={value}
+          maxLength={maxLength && maxLength}
           secureTextEntry={secureTextEntry}
           keyboardType={keyboardType ? keyboardType : "default"}
           editable={!disabled}

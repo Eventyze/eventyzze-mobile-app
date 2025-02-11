@@ -65,6 +65,7 @@ const CreateEventScreen = () => {
   const [videoUpload, setVideoUpload] = useState(false);
   const [currencyModal, setCurrencyModal] = useState(false);
   const [dateHolder, setDateHolder] = useState("");
+  const [eventCategoryIndicator, setEventCategoryIndicator] = useState(false);
   const [eventData, setEventData] = useState<formEventDataInterface>({
     title: "",
     description: "",
@@ -80,10 +81,34 @@ const CreateEventScreen = () => {
   const [loading, setLoading] = useState(false);
 
   const currencies = [
-    { code: "NGN", name: "Nigerian Naira", flag: "🇳🇬" },
-    { code: "USD", name: "United States Dollar", flag: "🇺🇸" },
-    { code: "EUR", name: "Euro", flag: "🇪🇺" },
-    { code: "GBP", name: "British Pound", flag: "🇬🇧" },
+    {
+      code: "NGN",
+      name: "Nigerian Naira",
+      flag: "🇳🇬",
+      description:
+        "The official currency of Nigeria, widely used across West Africa.",
+    },
+    {
+      code: "USD",
+      name: "United States Dollar",
+      flag: "🇺🇸",
+      description:
+        "The world's primary reserve currency, used in international trade worldwide.",
+    },
+    {
+      code: "EUR",
+      name: "Euro",
+      flag: "🇪🇺",
+      description:
+        "The official currency of the Eurozone, used by 20 European countries and also accepted worldwide.",
+    },
+    {
+      code: "GBP",
+      name: "British Pound",
+      flag: "🇬🇧",
+      description:
+        "The currency of the United Kingdom, also accepted worldwide",
+    },
   ];
 
   const categories: categoryData[] = React.useMemo(
@@ -93,171 +118,197 @@ const CreateEventScreen = () => {
         name: "Concerts",
         image:
           require("../../assets/eventCategories/concert.jpg") as ImageSourcePropType,
-        description: "Organize live music performances, band shows, or singing competitions.",
+        description:
+          "Organize live music performances, band shows, or singing competitions.",
       },
       {
         id: "2",
         name: "Sport",
         image:
           require("../../assets/eventCategories/sports.jpg") as ImageSourcePropType,
-          description: "Host sports tournaments, fitness challenges, or athletic events.",
+        description:
+          "Host sports tournaments, fitness challenges, or athletic events.",
       },
       {
         id: "3",
         name: "Technology",
         image:
           require("../../assets/eventCategories/tech.jpg") as ImageSourcePropType,
-          description: "Set up hackathons, tech conferences, or product showcases."
+        description:
+          "Set up hackathons, tech conferences, or product showcases.",
       },
       {
         id: "4",
         name: "Gaming",
         image:
           require("../../assets/eventCategories/gaming.jpg") as ImageSourcePropType,
-          description: "Create gaming tournaments, eSports competitions, or game launches."
+        description:
+          "Create gaming tournaments, eSports competitions, or game launches.",
       },
       {
         id: "5",
         name: "Science",
         image:
           require("../../assets/eventCategories/science.jpg") as ImageSourcePropType,
-          description: "Plan science fairs, research symposiums, or innovation expos."
+        description:
+          "Plan science fairs, research symposiums, or innovation expos.",
       },
       {
         id: "6",
         name: "Networking",
         image:
           require("../../assets/eventCategories/networking.jpg") as ImageSourcePropType,
-          description: "Arrange professional meetups, career fairs, or industry mixers."
+        description:
+          "Arrange professional meetups, career fairs, or industry mixers.",
       },
       {
         id: "7",
         name: "Fashion",
         image:
           require("../../assets/eventCategories/fashion.jpg") as ImageSourcePropType,
-          description: "Host fashion shows, styling workshops, or designer showcases."
+        description:
+          "Host fashion shows, styling workshops, or designer showcases.",
       },
       {
         id: "8",
         name: "Beauty",
         image:
           require("../../assets/eventCategories/beauty.jpg") as ImageSourcePropType,
-          description: "Organize beauty masterclasses, product launches, or wellness sessions."
+        description:
+          "Organize beauty masterclasses, product launches, or wellness sessions.",
       },
       {
         id: "9",
         name: "Fitness",
         image:
           require("../../assets/eventCategories/fitness.jpg") as ImageSourcePropType,
-          description: "Plan workout boot camps, marathons, or yoga retreats."
-
+        description: "Plan workout boot camps, marathons, or yoga retreats.",
       },
       {
         id: "10",
         name: "Art",
         image:
           require("../../assets/eventCategories/art.jpg") as ImageSourcePropType,
-          description: "Curate art exhibitions, creative workshops, or live painting events."
+        description:
+          "Curate art exhibitions, creative workshops, or live painting events.",
       },
       {
         id: "11",
         name: "Cultural events",
         image:
           require("../../assets/eventCategories/culture.jpg") as ImageSourcePropType,
-          description: "Celebrate traditions with cultural festivals, heritage events, or folk performances."
+        description:
+          "Celebrate traditions with cultural festivals, heritage events, or folk performances.",
       },
       {
         id: "12",
         name: "Literature",
         image:
           require("../../assets/eventCategories/literature.jpg") as ImageSourcePropType,
-          description: "Host book launches, poetry readings, or writer meetups."
+        description: "Host book launches, poetry readings, or writer meetups.",
       },
       {
         id: "13",
         name: "Seminars",
         image:
           require("../../assets/eventCategories/seminar.jpg") as ImageSourcePropType,
-          description: "Conduct educational sessions, expert talks, or training workshops."
+        description:
+          "Conduct educational sessions, expert talks, or training workshops.",
       },
       {
         id: "14",
         name: "Nature",
         image:
           require("../../assets/eventCategories/nature.jpg") as ImageSourcePropType,
-          description: "Plan eco-friendly events, outdoor adventures, or nature conservation drives."
+        description:
+          "Plan eco-friendly events, outdoor adventures, or nature conservation drives.",
       },
       {
         id: "15",
         name: "Charity",
         image:
           require("../../assets/eventCategories/charity.jpg") as ImageSourcePropType,
-          description: "Organize fundraising campaigns, community outreach programs, or donation drives."
+        description:
+          "Organize fundraising campaigns, community outreach programs, or donation drives.",
       },
       {
         id: "16",
         name: "Cooking",
         image:
           require("../../assets/eventCategories/cooking.jpg") as ImageSourcePropType,
-          description: "Set up cooking classes, food tastings, or chef competitions."
+        description:
+          "Set up cooking classes, food tastings, or chef competitions.",
       },
       {
         id: "17",
         name: "Dance",
         image:
           require("../../assets/eventCategories/dance.jpg") as ImageSourcePropType,
-          description: "Host dance workshops, performances, or dance battles."
+        description: "Host dance workshops, performances, or dance battles.",
       },
       {
         id: "18",
         name: "Travel",
         image:
           require("../../assets/eventCategories/travel.jpg") as ImageSourcePropType,
-          description: "Organize travel expos, adventure tours, or trip planning sessions."
+        description:
+          "Organize travel expos, adventure tours, or trip planning sessions.",
       },
       {
         id: "19",
         name: "Movies",
         image:
           require("../../assets/eventCategories/movie.jpg") as ImageSourcePropType,
-          description: "Arrange film screenings, premieres, or cinema-related discussions."
+        description:
+          "Arrange film screenings, premieres, or cinema-related discussions.",
       },
       {
         id: "20",
         name: "Music and Entertainment",
         image:
           require("../../assets/eventCategories/music.jpg") as ImageSourcePropType,
-          description: "Plan entertainment nights, live shows, or music festivals."
+        description:
+          "Plan entertainment nights, live shows, or music festivals.",
       },
       {
         id: "21",
         name: "Festivals",
         image:
           require("../../assets/eventCategories/festival.jpg") as ImageSourcePropType,
-          description: "Organize large-scale celebrations, seasonal festivals, or themed parties."
+        description:
+          "Organize large-scale celebrations, seasonal festivals, or themed parties.",
       },
       {
         id: "22",
         name: "Other",
         image:
           require("../../assets/eventCategories/other.jpg") as ImageSourcePropType,
-          description: "If your event doesn’t fit into any category, select this option"
+        description:
+          "If your event doesn’t fit into any category, select this option",
       },
     ],
     []
   );
 
-  const renderItem = ({ item }: { item: any }) => (
+  const renderCurrencies = ({ item }: { item: any }) => (
     <TouchableOpacity
-      className={`flex-row items-center mt-4 my-2 py-2`}
+      className="flex-row items-center bg-gray-100 p-4 mb-3 rounded-lg"
       onPress={() => {
         setEventData((prevData) => ({ ...prevData, currency: item.code }));
         setCurrencyModal(false);
       }}
     >
-      <Text className={`text-2xl p-4 rounded-xl bg-[#FF8038]`}>
-        {item.flag} - {item.code}
-      </Text>
+      <Text className="text-3xl mr-4">{item.flag}</Text>
+      <View>
+        <View>
+        <Text className="text-lg font-semibold">
+          {item.name} ({item.code})
+        </Text>
+        </View>
+        <View className="pr-10">
+        <Text className="text-gray-500 flex-wrap">{item.description}</Text>
+      </View>
+      </View>
     </TouchableOpacity>
   );
 
@@ -267,7 +318,7 @@ const CreateEventScreen = () => {
       onPress={() => {
         setEventData((prevData) => ({ ...prevData, category: item.name }));
         setCategoryModal(false);
-        console.log(eventData);
+        setEventCategoryIndicator(false);
       }}
     >
       <View className="flex-row items-center bg-white p-3 rounded-lg shadow-xl">
@@ -468,9 +519,8 @@ const CreateEventScreen = () => {
     }
   }, []);
 
-  const handleContinue = async () => {
+  const handleCreateEvent = async () => {
     setLoading(true);
-    console.log(eventData);
 
     try {
       if (
@@ -518,7 +568,7 @@ const CreateEventScreen = () => {
       data.append("duration", eventData.duration);
       data.append("cost", eventData.amount);
       data.append("currency", eventData.currency);
-      data.append("category", eventData.category)
+      data.append("category", eventData.category);
 
       const response: any = await createEvent(data);
 
@@ -590,7 +640,7 @@ const CreateEventScreen = () => {
           className="flex-1 mb-20"
           keyboardShouldPersistTaps="handled"
         >
-          <View className="w-full p-4">
+          <View className="w-full pl-4 pr-4">
             <Text
               className="text-2xl mt-2"
               style={{ fontFamily: "BarlowBold" }}
@@ -600,12 +650,17 @@ const CreateEventScreen = () => {
             <InputField
               placeholder="Event Title"
               textWidth="100%"
+              maxLength={60}
               borderColor={eventData.title ? "green" : "#555555"}
               borderSize={eventData.title ? "2" : ""}
               onChange={(title) =>
                 setEventData((prev: any) => ({ ...prev, title: title }))
               }
             />
+            <View className="">
+            <Text className="text-left mt-1 text-sm text-gray-400">{eventData.title.length}/60</Text>
+            </View>
+            
           </View>
 
           <Animated.View className="p-4">
@@ -776,10 +831,19 @@ const CreateEventScreen = () => {
           <Animated.View className="pl-3 pr-3 mt-4">
             <Text className="text-2xl" style={{ fontFamily: "BarlowSemiBold" }}>
               Categories{" "}
-              {eventBannerActivity ? <ActivityIndicator color="#FF8038" /> : ""}
+              {eventCategoryIndicator ? (
+                <ActivityIndicator color="#FF8038" />
+              ) : (
+                ""
+              )}
             </Text>
 
-            <TouchableOpacity onPress={() => setCategoryModal(true)}>
+            <TouchableOpacity
+              onPress={() => {
+                setCategoryModal(true);
+                setEventCategoryIndicator(true);
+              }}
+            >
               <InputField
                 placeholder="Select Category"
                 textWidth="100%"
@@ -796,7 +860,10 @@ const CreateEventScreen = () => {
               animationType="slide"
               // presentationStyle="fullScreen"
               transparent
-              onDismiss={() => setCategoryModal(false)}
+              onDismiss={() => {
+                setCategoryModal(false);
+                setEventCategoryIndicator(false);
+              }}
             >
               <View className="bg-white h-full mt-4 my-2 px-2 py-2">
                 <View className="mb-4 pb-4 justify-between flex flex-row">
@@ -807,7 +874,10 @@ const CreateEventScreen = () => {
                     Select a Category
                   </Text>
                   <TouchableOpacity
-                    onPress={() => setCategoryModal(false)}
+                    onPress={() => {
+                      setCategoryModal(false);
+                      setEventCategoryIndicator(false);
+                    }}
                     className="w-[10%] shadow-2xl rounded-full justify-center items-center"
                   >
                     <Text className="text-center w-[100%]">
@@ -854,11 +924,23 @@ const CreateEventScreen = () => {
                 animationType="slide"
                 presentationStyle="fullScreen"
               >
-                <View className="flex-1 justify-center items-center">
+                <View className="flex-1 bg-white">
+                  <View className="p-4 flex flex-row justify-between border-b border-gray-300">
+                    <Text className="text-xl font-bold">
+                      Select Currency
+                    </Text>
+                  <TouchableOpacity onPress={() => setCurrencyModal(false)}>
+                    <Text className="w-[70%] text-center">
+                      {<MaterialIcons name="close" size={25} color="#FF8038" />}
+                    </Text>
+                    </TouchableOpacity>
+                  </View>
+
                   <FlatList
                     data={currencies}
-                    renderItem={renderItem}
+                    renderItem={renderCurrencies}
                     keyExtractor={(item) => item.code}
+                    contentContainerStyle={{ padding: 16 }}
                   />
                 </View>
               </Modal>
@@ -887,7 +969,7 @@ const CreateEventScreen = () => {
               gradientColors={["#FF8038", "#FF8038", "#FF8038"]}
               buttonColour={"#FF8038"}
               buttonWidth={"full"}
-              action={handleContinue}
+              action={handleCreateEvent}
             />
           </View>
         </ScrollView>

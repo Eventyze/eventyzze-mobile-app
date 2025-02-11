@@ -22,6 +22,7 @@ import Loading from "@/components/GeneralComponents/Loading";
 import Footer from "@/components/GeneralComponents/Footer";
 import { formatDate } from '../../utilities/utilities';
 import Button from "../../components/Button";
+import { Stack } from "expo-router";
 
 // import { getLocalStorageData } from '@/services/axiosSetup/storage';
 // import RNFS from 'react-native-fs';
@@ -111,7 +112,7 @@ const Event2 = () => {
           <Image
             source={{ uri: item.source }}
             style={{ width: "80%", height: 250, borderRadius: 10, }}
-            resizeMode="cover"
+            resizeMode="stretch"
             className=""
           />
         </View>
@@ -145,10 +146,16 @@ const Event2 = () => {
   };
 
   return (
-    <SafeAreaView className="bg-white mb-10">
-      <ScrollView className="">
+    <SafeAreaView className="bg-white">
+    <Stack.Screen
+      options={{
+        headerShown: false,
+      }}
+    />
+
+      <ScrollView className="mb-20">
         <StatusBar style="auto" />
-        <View className="mt-4 pl-4 pr-4">
+        <View className="mt-4 mb-16 pl-4 pr-4">
         <View className="rounded-2xl bg-[#CACACA]"
         style={{borderColor: "#CACACA", borderWidth: 10, borderStyle: 'solid'}}
         >
@@ -190,42 +197,60 @@ const Event2 = () => {
             className="mt-2 pl-2 flex justify-center text-center pr-2 text-[#FF8038] bg-white"
             style={{ fontFamily: "BarlowSemiBold" }}
           >
-            {"<< Swipe to toggle between Event Banner & Ad-Video >>"}
+            {"<< Swipe the video to toggle between banner & ad >>"}
           </Text>
           }
           {/* Event Title */}
-          <Text className="text-3xl pl-4 text-center bg-white pr-4 mt-6 font-bold text-black mb-2"
+          <Text className="text-2xl pl-4 text-center bg-white pr-4 mt-6 font-bold text-black mb-2"
           style={{ fontFamily: "BarlowBold" }}
           >
             {eventData.title || "Loading event title..."}
           </Text>
 
           {/* Event Date & Time */}
-          <Text className="text-2xl pl-4 pr-4 text-center bg-white text-gray-500 mb-2">
+          <Text className="text-xl pl-4 pr-4 text-center bg-white text-gray-500 mb-2">
           {formatDate(eventData.startDate) || "Loading event date..."}
           </Text>
 
-          <Text className="text-2xl pl-4 pr-4 text-center bg-white text-gray-500 mb-2">
+          <Text className="text-xl pl-4 pr-4 text-center bg-white text-gray-500 mb-2">
            {`${eventData.time} (Prompt)` || "Loading event time..."}
           </Text>
           <View className="h-1 border-b border-dashed border-gray-500 ml-6 mr-6"></View>
           {/* Event Description */}
-          <Text className="text-xl pl-4 pr-4 text-center bg-white text-gray-700 mb-4">
+          <Text className="text-xl pl-4 mt-4 pr-4 text-center bg-white text-gray-700 mb-4">
           {eventData.description || "Loading event description..."}
             {/* <Text className="text-blue-500"> Read More</Text> */}
           </Text>
 
-          <Text className="text-3xl pl-4 mt-6 mb-10 text-center pr-4 bg-white"
+          <Text className="text-3xl pl-4 mt-6 text-center pr-4 bg-white"
           style={{fontFamily: "BarlowBold"}}
           >
           {eventData.cost || "Loading cost..."} {eventData.currency || "Loading event cost currency..."} 
           </Text>
 
+          <View className="flex-row justify-between mb-14">
+            <View className="">
+              <Image
+                  source={require('../../assets/eventCreationPage/ellipse.png')}
+                  className="w-[30px] h-30 rounded-full ml-[-10]"
+                  resizeMode="stretch"
+                />
+              
+            </View>
+            <View className="">
+              <Image
+                  source={require('../../assets/eventCreationPage/ellipse.png')}
+                  className="w-[30px] h-30 rounded-full mr-[-10]"
+                  resizeMode="stretch"
+                />
+             
+            </View>
+          </View>
           </View>
           </View>
 
           <View>
-            <Text className="mt-4 text-3xl text-center font-bold"
+            <Text className="mt-10 text-3xl text-center font-bold"
             style={{ fontFamily: "BarlowBold" }}
             >
               Event Created Successfully!
@@ -235,7 +260,7 @@ const Event2 = () => {
 
           {/* Confirm Button */}
 
-          <View>
+          <View className="flex-row justify-center items-center gap-10 pl-16 mt-12 pr-16">
           <Button
             title={isContinueLoading ? "Loading..." : "Continue"}
             gradientPadding={1}
@@ -249,7 +274,7 @@ const Event2 = () => {
             title={"Share"}
             gradientPadding={1}
             gradientColors={["#FF8038", "#FF8038", "#FF8038"]}
-            buttonColour={"#FF8038"}
+            buttonColour={"white"}
             buttonWidth={"full"}
             disabled={isContinueLoading}
           />
