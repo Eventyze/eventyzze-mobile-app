@@ -7,7 +7,12 @@ import {
   ActivityIndicator,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { router, useFocusEffect, usePathname } from "expo-router";
+import {
+  router,
+  useFocusEffect,
+  usePathname,
+  useLocalSearchParams,
+} from "expo-router";
 import Modal from "./Modal";
 import EventModal from "./EventPrompt";
 import backgroundImage from "../../assets/general/prompt-banner.png";
@@ -43,6 +48,13 @@ export default function Footer() {
   );
 
   const createEventRedirect = async () => {
+    if (
+      currentPath === "/create-event" ||
+      currentPath === "/create-event-event2" ||
+      currentPath === "/create-event-event3"
+    ) {
+      return;
+    }
     setLoading(true);
     const user = await getLocalStorageData("user");
     if (!user.isInitialHostingOfferExhausted) {
@@ -50,7 +62,8 @@ export default function Footer() {
       return setLoading(false);
     }
     if (
-      user.isInitialHostingOfferExhausted && user.subscriptionPlan === "Free"
+      user.isInitialHostingOfferExhausted &&
+      user.subscriptionPlan === "Free"
     ) {
       setNewUserExhaustedFree(true);
       return setLoading(false);
@@ -64,12 +77,15 @@ export default function Footer() {
       return setLoading(false);
     }
 
-    if (user.subscriptionPlan !== "Free" && new Date(user.subscriptionDetails?.dateOfExpiry) >= new Date()) {
+    if (
+      user.subscriptionPlan !== "Free" &&
+      new Date(user.subscriptionDetails?.dateOfExpiry) >= new Date()
+    ) {
       setUserIsHost(true);
       return setLoading(false);
     }
-  
-    setLoading(false)
+
+    setLoading(false);
   };
 
   return (
@@ -144,32 +160,6 @@ export default function Footer() {
           Profile
         </Text>
       </TouchableOpacity>
-      {/* <Modal
-        isVisible={createEventModal}
-        onClose={() => setCreateEventModal(false)}
-        title="Error"
-        height="50%"
-        width="100%"
-        showHeader={true}
-        showCloseIcon={true}
-        titleColor="#FF0000"
-        closeOnBackdropPress={true}
-      >
-        <Text className="text-center text-lg font-semibold">
-          You are on a free subscription, only hosts can create and host events
-        </Text>
-        <Text className="text-center text-lg mt-10 font-semibold">
-          Upgrade to a host to create and host events 😊
-        </Text>
-        <TouchableOpacity
-          className="bg-[#FF8038] w-full rounded-full p-4 mt-10"
-          onPress={() => router.push("/subscription")}
-        >
-          <Text className="text-center text-white text-lg font-semibold">
-            Upgrade
-          </Text>
-        </TouchableOpacity>
-      </Modal> */}
 
       {/* New user prompt */}
       <EventModal
@@ -188,7 +178,7 @@ export default function Footer() {
             translucent
           />
         )}
-        <NewUserPrompt />
+        <NewUserPrompt onClose={() => setIsNewUserModal(false)} />
       </EventModal>
 
       {/* New user prompt with exhausted free streaming */}
@@ -208,7 +198,7 @@ export default function Footer() {
             translucent
           />
         )}
-        <ExpiredFreeSubscriptionPrompt />
+        <ExpiredFreeSubscriptionPrompt onClose={() => setIsNewUserModal(false)}/>
       </EventModal>
 
       {/* Users with expired subscriptions */}
@@ -228,7 +218,7 @@ export default function Footer() {
             translucent
           />
         )}
-        <ExpiredSubscriptionPrompt />
+        <ExpiredSubscriptionPrompt onClose={() => setIsNewUserModal(false)}/>
       </EventModal>
 
       {/* Already subscribed user */}
@@ -249,7 +239,7 @@ export default function Footer() {
             translucent
           />
         )}
-        <SubscribedUserPrompt />
+        <SubscribedUserPrompt onClose={() => setIsNewUserModal(false)}/>
       </EventModal>
     </View>
   );

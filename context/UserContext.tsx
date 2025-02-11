@@ -30,18 +30,21 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       const user = await getLocalStorageData('user');
       if (!user) {
         console.warn("No user found in storage, skipping logout");
-        return;
+        await logoutClear();
+        setUser(null);
+        setIsAuthenticated(false);
+        return router.replace('/login');
       }
   
       const response = await userLogout(user.email);
       console.log("User logout response:", response);
   
-      await logoutClear(); // Only clear tokens after confirming logout
+      await logoutClear();
       setUser(null);
       setIsAuthenticated(false);
       router.replace('/login');
-    } catch (error) {
-      console.error('Logout error:', error);
+    } catch (error:any) {
+      console.error('Logout error:', error.message);
     }
   };
   

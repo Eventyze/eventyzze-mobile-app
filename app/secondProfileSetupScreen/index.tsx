@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -22,18 +22,17 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
 import PhoneInput from "react-native-phone-input";
-import { Country, State } from "country-state-city";
-import type { ICountry } from "country-state-city";
+import countriesData from '../../data/countries_states.json';
 
 interface CountryItem {
-  label: string;
-  value: string;
-  flag: string;
+  name: string;
+  code: string;
+  flag?: string;
 }
 
 interface StateItem {
-  label: string;
-  value: string;
+  name: string;
+  code: string;
 }
 
 interface SearchModalProps {
@@ -113,7 +112,7 @@ const SearchModal = ({
         ) : (
           <FlatList
             data={data}
-            keyExtractor={(item: any) => item.value}
+            // keyExtractor={(item: any) => item.value}
             renderItem={({ item }: { item: any }) => (
               <TouchableOpacity
                 className="px-4 py-4 border-b border-gray-100"
@@ -124,7 +123,7 @@ const SearchModal = ({
               >
                 <Text className="text-base">
                   {item.flag ? `${item.flag} ` : ""}
-                  {item.label}
+                  {item.name}
                 </Text>
               </TouchableOpacity>
             )}
@@ -149,25 +148,27 @@ export default function SecondProfileSetupScreen() {
 
   const params = useLocalSearchParams();
 
-    const profileData = React.useMemo(() => ({
-    userName: params.userName as string,
-    bio: params.bio as string,
-    profileImage: params.profileImage as string,
-  }), [params]);
-
-  const [isCountryModalLoading, setIsCountryModalLoading] = useState(false);
   const [isCountryModalVisible, setIsCountryModalVisible] = useState(false);
   const [isStateModalVisible, setIsStateModalVisible] = useState(false);
-  const [countries, setCountries] = useState<CountryItem[]>([]);
-  const [states, setStates] = useState<StateItem[]>([]);
-  const [isLoadingCountries, setIsLoadingCountries] = useState(false);
+  const [countries, setCountries] = useState<any[]>([]);
+  const [states, setStates] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [stateSearchQuery, setStateSearchQuery] = useState("");
   const phoneInputRef = useRef<any>(null);
-  const [myCountryPicker, setMyCountryPicker] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState("ng");
   const debouncedCountrySearch = useDebouncedValue(searchQuery, 300);
   const debouncedStateSearch = useDebouncedValue(stateSearchQuery, 300);
+
+
+  useEffect(() => {
+    setCountries(
+      countriesData.map((country:any) => ({
+        name: country.name,
+        code: country.code,
+        flag: country.flag
+      }))
+    );
+  }, []);
+
 
   const handlePhoneChange = (text: string) => {
     setFormData((prev) => ({
@@ -176,29 +177,22 @@ export default function SecondProfileSetupScreen() {
     }));
   };
 
-  const handleCountryChange = (item: CountryItem): void => {
-    setFormData((prev) => ({
+
+  const handleCountryChange = useCallback((item: CountryItem) => {
+    setFormData(prev => ({
       ...prev,
       country: item,
-      state: null,
+      state: null
     }));
+    const countryStates = countriesData.find(country => country.name === item.name)?.states || [];
+    setStates(countryStates.map(state => ({ name: state.name, code: state.code })));
+  }, [])
 
-    const countryStates: StateItem[] = State.getStatesOfCountry(item.value).map(
-      (state) => ({
-        label: state.name,
-        value: state.isoCode,
-      })
-    );
-    setStates(countryStates);
+
+
+  const handleStateChange = (item: StateItem) => {
+    setFormData(prev => ({ ...prev, state: item }));
   };
-
-  const handleStateChange = (item: StateItem): void => {
-    setFormData((prev) => ({
-      ...prev,
-      state: item,
-    }));
-
-  }
 
   const handleNext = () => {
     if (!formData.phoneNumber.trim()) {
@@ -251,22 +245,16 @@ export default function SecondProfileSetupScreen() {
         profileImage: params.profileImage as string,
         phone: formData.phoneNumber as string,
         fullName: formData.fullName as string,
-        country: formData.country.label as string,
-        state: formData.state.label as string,
+        country: formData.country.name as string,
+        state: formData.state.name as string,
         address: formData.address as string,
-        stateCode: formData.state.value as string,
-        countryCode: formData.country.value as string,
+        stateCode: formData.state.code as string,
+        countryCode: formData.country.code as string,
       },
     });
   };
 
-  const handleCountryLoading = () => {
-    return setIsCountryModalLoading(true);
-  };
   const handleCountrySelect = () => {
-    if (!countries.length) {
-      fetchCountries();
-    }
     setIsCountryModalVisible(true);
   };
 
@@ -284,36 +272,15 @@ export default function SecondProfileSetupScreen() {
     return router.back();
   };
 
-  const fetchCountries = async () => {
-    setIsLoadingCountries(true);
-    setIsCountryModalLoading(true);
-
-    try {
-      const allCountries = Country.getAllCountries().map(
-        (country: ICountry) => ({
-          label: country.name,
-          value: country.isoCode,
-          flag: country.flag,
-        })
-      );
-      setCountries(allCountries);
-    } catch (error) {
-      console.error("Error loading countries:", error);
-    } finally {
-      setIsLoadingCountries(false);
-      setIsCountryModalLoading(false);
-    }
-  };
-
   const filteredCountries = useMemo(() => {
-    return countries.filter((item) =>
-      item.label.toLowerCase().includes(debouncedCountrySearch.toLowerCase())
+    return countries.filter(item =>
+      item.name.toLowerCase().includes(debouncedCountrySearch.toLowerCase())
     );
   }, [countries, debouncedCountrySearch]);
 
   const filteredStates = useMemo(() => {
-    return states.filter((item) =>
-      item.label.toLowerCase().includes(debouncedStateSearch.toLowerCase())
+    return states.filter(item =>
+      item.name.toLowerCase().includes(debouncedStateSearch.toLowerCase())
     );
   }, [states, debouncedStateSearch]);
 
@@ -322,6 +289,7 @@ export default function SecondProfileSetupScreen() {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
+        className="mb-10"
       >
         <View className="flex bg-white pb-4 shadow-gray-600 px-4 mt-20">
         <Animated.View className="flex-row gap-2 items-center">
@@ -336,36 +304,7 @@ export default function SecondProfileSetupScreen() {
           <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
         <View className="pt-7 pb-6 px-4">
           <Animated.View className="flex-col justify-between items-start w-full">
-            <View className="w-full">
-                  <Text
-                    className="text-2xl"
-                    style={{ fontFamily: "BarlowBold" }}
-                  >
-              Phone
-              </Text>
-                  <TouchableOpacity
-                    activeOpacity={0.8}
-                    className="bg-white border border-[#C9C9C9] rounded-xl"
-                  >
-                    <PhoneInput
-                      ref={phoneInputRef}
-                      initialCountry={selectedCountry}
-                      // initialValue="+2343178675309"
-                      textProps={{
-                        placeholder: "Enter a phone number...",
-                        placeholderTextColor: "#999",
-                      }}
-                      style={styles.phoneInput}
-                      flagStyle={styles.flag}
-                      pickerItemStyle={styles.pickerItem}
-                      cancelTextStyle={styles.cancelText}
-                      confirmTextStyle={styles.confirmText}
-                      onChangePhoneNumber={(text)=> handlePhoneChange(text)}
-                      pickerBackgroundColor="#FF8038"
-                    />
-                  </TouchableOpacity>
-            </View>
-            <View className="w-full mt-4">
+          <View className="w-full mt-4">
                   <Text
                     className="text-2xl"
                     style={{ fontFamily: "BarlowBold" }}
@@ -386,36 +325,28 @@ export default function SecondProfileSetupScreen() {
                     className="text-2xl"
                     style={{ fontFamily: "BarlowBold" }}
                   >
-                Country
+              Phone
               </Text>
                   <TouchableOpacity
-                    onPress={() => {
-                      handleCountryLoading();
-                      handleCountrySelect();
-                    }}
-                    disabled={isLoadingCountries}
-                    className="mt-2 border border-gray-300 rounded-xl p-6 bg-white"
+                    activeOpacity={0.8}
+                    className="bg-white border border-[#C9C9C9] rounded-xl"
                   >
-                    {isCountryModalLoading ? (
-                      <View className="flex-row items-center">
-                        <ActivityIndicator size="small" color="#FF8038" />
-                        <Text className="ml-2 text-gray-400">
-                          Loading countries...
-                        </Text>
-                      </View>
-                    ) : (
-                      <Text
-                        className={
-                          formData.country ? "text-black" : "text-gray-400"
-                        }
-                      >
-                        {isCountryModalLoading
-                          ? "Loading countries..."
-                          : formData.country
-                          ? formData.country?.label
-                          : "Tap to select country"}
-                      </Text>
-                    )}
+                    <PhoneInput
+                      ref={phoneInputRef}
+                      initialCountry={"ng"}
+                      // initialValue="+2343178675309"
+                      textProps={{
+                        placeholder: "Enter a phone number...",
+                        placeholderTextColor: "#999",
+                      }}
+                      style={styles.phoneInput}
+                      flagStyle={styles.flag}
+                      pickerItemStyle={styles.pickerItem}
+                      cancelTextStyle={styles.cancelText}
+                      confirmTextStyle={styles.confirmText}
+                      onChangePhoneNumber={(text)=> handlePhoneChange(text)}
+                      pickerBackgroundColor="#FF8038"
+                    />
                   </TouchableOpacity>
             </View>
             <View className="w-full mt-4">
@@ -423,7 +354,31 @@ export default function SecondProfileSetupScreen() {
                     className="text-2xl"
                     style={{ fontFamily: "BarlowBold" }}
                   >
-                State
+                Select your country
+              </Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleCountrySelect();
+                    }}
+                    className="mt-2 border border-gray-300 rounded-xl p-6 bg-white"
+                  >
+                      <Text
+                        className={
+                          formData.country ? "text-black" : "text-gray-400"
+                        }
+                      >
+                        {formData.country
+                          ? formData.country?.name
+                          : "Tap to select country"}
+                      </Text>
+                  </TouchableOpacity>
+            </View>
+            <View className="w-full mt-4">
+                  <Text
+                    className="text-2xl"
+                    style={{ fontFamily: "BarlowBold" }}
+                  >
+                Select your state
               </Text>
                   <TouchableOpacity
                     onPress={() => handleStateLoading()}
@@ -435,7 +390,7 @@ export default function SecondProfileSetupScreen() {
                         formData.state ? "text-black" : "text-gray-400"
                       }
                     >
-                      {formData.state?.label || "Tap to select state"}
+                      {formData.state?.name || "Tap to select state"}
                     </Text>
                   </TouchableOpacity>
             </View>
@@ -485,7 +440,6 @@ export default function SecondProfileSetupScreen() {
       <SearchModal
         visible={isCountryModalVisible}
         onClose={() => {
-          setIsCountryModalLoading(false);
           setIsCountryModalVisible(false);
         }}
         data={filteredCountries}
@@ -494,7 +448,7 @@ export default function SecondProfileSetupScreen() {
         title="Select Country"
         searchValue={searchQuery}
         onSearchChange={setSearchQuery}
-        isLoading={isLoadingCountries}
+        isLoading={false}
       />
 
       <SearchModal
@@ -506,7 +460,7 @@ export default function SecondProfileSetupScreen() {
         title="Select State"
         searchValue={stateSearchQuery}
         onSearchChange={setStateSearchQuery}
-        isLoading={isLoadingCountries}
+        isLoading={false}
       />
     </SafeAreaView>
   );

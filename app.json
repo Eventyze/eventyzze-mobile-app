@@ -6,6 +6,8 @@
     "orientation": "portrait",
     "icon": "./assets/general/eventyze-logo.png",
     "scheme": "myapp",
+    "platforms": ["ios", "android"],
+    "deeplink": "myapp://",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -14,9 +16,22 @@
       "userInterfaceStyle": "light"
     },
     "android": {
+      "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/general/eventyze-logo.png",
-        "backgroundColor": "#000000"
+        "backgroundColor": "#000000",
+        "intentFilters": [
+          {
+            "action": "VIEW",
+            "data": [
+              {
+                "scheme": "myapp",
+                "host": "payment-callback"
+              }
+            ],
+            "category": ["BROWSABLE", "DEFAULT"]
+          }
+        ]
       },
       "package": "com.eventyzze.app",
       "scheme": "myapp",
@@ -38,6 +53,13 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#000000"
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow Eventyzze to access your photos.",
+          "savePhotosPermission": "Allow Eventyzze to save photos."
         }
       ]
     ],

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Modal as RNModal,
+  Modal,
   View,
   TouchableOpacity,
   Text,
@@ -48,7 +48,7 @@ const EventModal: React.FC<EventModalProps> = ({
   
 
   return (
-    <RNModal
+    <Modal
       animationType="slide"
       transparent={false}
       visible={isVisible}
@@ -123,7 +123,7 @@ const EventModal: React.FC<EventModalProps> = ({
             </TouchableWithoutFeedback>
           </View>
         )}
-    </RNModal>
+    </Modal>
   );
 };
 

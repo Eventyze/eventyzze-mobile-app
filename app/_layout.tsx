@@ -73,11 +73,19 @@ export default function RootLayout() {
             options={{ headerShown: false, navigationBarHidden: true }}
           />
           <Stack.Screen
+            name="payment-callback/index"
+            options={{ headerShown: false, navigationBarHidden: true }}
+          />
+          <Stack.Screen
             name="secondProfileSetupScreen/index"
             options={{ headerShown: false, navigationBarHidden: true }}
           />
           <Stack.Screen
             name="signupRedirect/index"
+            options={{ headerShown: false, navigationBarHidden: true }}
+          />
+            <Stack.Screen
+            name="create-event/index"
             options={{ headerShown: false, navigationBarHidden: true }}
           />
            <Stack.Screen
@@ -86,6 +94,10 @@ export default function RootLayout() {
           />
           <Stack.Screen
             name="payment/index"
+            options={{ headerShown: false, navigationBarHidden: true }}
+          />
+          <Stack.Screen
+            name="test/index"
             options={{ headerShown: false, navigationBarHidden: true }}
           />
           <Stack.Screen

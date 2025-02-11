@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity, Modal, SafeAreaView, ActivityIndicator, StatusBar } from "react-native";
 import Animated from "react-native-reanimated";
 import { InputField } from "../../components/GeneralComponents/InputField";
@@ -7,9 +7,8 @@ import { router } from "expo-router";
 import TextArea from "../../components/GeneralComponents/TextAreaComponent";
 import { Ionicons } from '@expo/vector-icons';
 import { requestCameraPermissionsAsync, requestMediaLibraryPermissionsAsync, launchImageLibraryAsync, launchCameraAsync} from 'expo-image-picker'
-import { updateUserImage } from "../../services/axiosFunctions/userAxios/userAxios";
+import { updateUserImage, checkUserNameAvailability } from "../../services/axiosFunctions/userAxios/userAxios";
 import Toast from "react-native-toast-message";
-import * as ImagePicker from 'expo-image-picker';
 
 export default function ProfileSetup() {
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -18,6 +17,9 @@ export default function ProfileSetup() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [tempImage, setTempImage] = useState<string | null>(null);
+  const [isActivity, setIsActivity] = useState(false)
+  const [isOkay, setIsOkay] = useState(false)
+  const [isNotOkay, setIsNotOkay] = useState(false)
 
   const requestPermissions = async () => {
     const { status: cameraStatus } = await requestCameraPermissionsAsync();
@@ -54,6 +56,62 @@ export default function ProfileSetup() {
       });
     }
   };
+
+  const checkUserName = async() => {
+
+    setIsActivity(true)
+
+    try {
+      const userName = username;
+
+      const response = await checkUserNameAvailability(userName);
+
+      if (response.status !== 200) {
+        setIsActivity(false)
+
+        Toast.show({
+          type: 'error',
+          text1: response.data?.message,
+        });
+        return setIsNotOkay(true)
+      } 
+
+        Toast.show({
+          type: 'success',
+          text1: response.data?.message,
+        });
+
+        setIsOkay(true);
+        setIsActivity(false)
+
+    } catch (error:any) {
+      setIsActivity(false)
+      setIsOkay(false);
+      setIsNotOkay(true)
+      console.error('Error checking username', error.message);
+      Toast.show({
+        type: 'error',
+        text1: 'Error checking username',
+      });
+    } finally {
+    }
+  }
+
+  useEffect(() => {
+    if (!username) return;
+
+    const delayDebounce = setTimeout(() => {
+      checkUserName();
+    }, 1000);
+
+    return () => clearTimeout(delayDebounce); // Clear timeout if user types again
+  }, [username]);
+
+  useEffect(() => {
+    setIsOkay(false);
+    setIsNotOkay(false);
+    // setIsActivity(false)
+  }, [username]);
 
   const pickImage = async () => {
     const hasPermission = await requestPermissions();
@@ -94,8 +152,6 @@ export default function ProfileSetup() {
       } as any);
 
       const response = await updateUserImage(formData);
-
-      console.log('res', response.data)
 
       if (response.status === 200) {
         const imageUrl = response.data?.data?.imageUrl || response.data?.imageUrl;
@@ -201,13 +257,16 @@ export default function ProfileSetup() {
                 className="text-base text-blackTransparent"
                 style={{ fontFamily: "BarlowRegular" }}
               >
-                Set a name that would be visible to others
+                Set a unique name that would be visible to others
               </Text>
               <InputField 
                 placeholder={username ? username : "Username"} 
                 width="100%" 
                 value={username}
                 onChange={setUsername}
+                isActivity={isActivity}
+                isOkay={isOkay}
+                isNotOkay={isNotOkay}
               />
             </View>
           </Animated.View>
@@ -227,7 +286,7 @@ export default function ProfileSetup() {
             <View className="w-full items-center mt-4">
               <TextArea 
                 placeholder={bio ? bio : "Eventyzze"} 
-                value={bio}
+                value={bio ?? ""}
                 onChangeText={setBio}
               />
             </View>
@@ -242,6 +301,7 @@ export default function ProfileSetup() {
             buttonColour={"#FF8038"}
             buttonWidth={"full"}
             action={handleNext}
+            disabled={isActivity}
           />
         </View>
       </ScrollView>
@@ -278,6 +338,7 @@ export default function ProfileSetup() {
                       setProfileImage(null);
                       setIsLoading(false);
                     }}
+                    disabled={isLoading}
                   />
                   <Button
                     title={isLoading ? "Saving..." : "Save"}
@@ -286,7 +347,7 @@ export default function ProfileSetup() {
                     buttonColour={"#FF8038"}
                     buttonWidth={140}
                     action={handleSaveImage}
-                    disabled={isLoading}
+                    disabled={isLoading || isActivity}
                   />
                 </View>
               </View>
@@ -308,7 +369,7 @@ export default function ProfileSetup() {
                   onPress={() => setIsModalVisible(false)}
                   className="p-4"
                 >
-                  <Text className="text-lg text-center text-red-500">Cancel</Text>
+                  <Text className="text-lg text-center text-[#FF8038]">Cancel</Text>
                 </TouchableOpacity>
               </>
             )}

@@ -2,7 +2,12 @@ import { View, Text, TouchableOpacity, StatusBar } from "react-native";
 import React, { useCallback, useState, useEffect } from "react";
 import { router, useFocusEffect, usePathname } from "expo-router";
 
-const ExpiredSubscriptionPrompt:React.FC = () => {
+
+interface ExpiredProps {
+  onClose: () => void | any;
+}
+
+const ExpiredSubscriptionPrompt:React.FC<ExpiredProps> = ({ onClose }) => {
     return (
         <View className="h-full w-full">
         <Text className="text-center text-xl font-semibold">
@@ -16,7 +21,7 @@ const ExpiredSubscriptionPrompt:React.FC = () => {
         <View className="flex-1 flex-row justify-center items-center px-24 gap-4">
           <TouchableOpacity
             className="bg-[#FF8038] w-full rounded-full p-4"
-            onPress={() => router.push("/subscription")}
+            onPress={() => {onClose(); router.push("/subscription")}}
           >
             <Text className="text-center text-white text-lg font-semibold">
               Subscribe

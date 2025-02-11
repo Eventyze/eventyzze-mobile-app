@@ -144,8 +144,6 @@ export const emailSignup = async (body: SignupBody): Promise<ApiResponse> => {
       const data = new FormData();
 
       const imageFile = formData.get('image');
-
-      console.log('img', imageFile)
       
       if (imageFile) {
         data.append('image', {
@@ -207,6 +205,50 @@ export const userLogout = async (email:string) => {
       }
 }
 
+export const checkUserNameAvailability = async(userName:string) => {
+  try {
+    const response = await axios.get(`/users/username-confirm?userName=${userName}`);
+    return response;
+    } catch (error: any) {
+      return error.response;
+      }
+}
+
+export const fetchAllHosts = async() => {
+  try {
+    const response = await axios.get(`/host/get-all-hosts`);
+    return response;
+    } catch (error: any) {
+      return error.response;
+    }
+}
+
+export const fetchLiveEvents = async() => {
+  try {
+    const response = await axios.get(`/users/live-events`);
+    return response;
+    } catch (error: any) {
+      return error.response;
+    }
+}
+
+export const fetchAllEvents = async() => {
+  try {
+    const response = await axios.get(`/users/all-events`);
+    return response;
+    } catch (error: any) {
+      return error.response;
+    }
+}
+
+export const fetchTrendingEvents = async() => {
+  try {
+    const response = await axios.get(`/users/trending-events`);
+    return response;
+    } catch (error: any) {
+      return error.response;
+    }
+}
 // export const userLogoutForce = async () => {
 //   try {
 //     const response = await axios.post("/auth/logout");
