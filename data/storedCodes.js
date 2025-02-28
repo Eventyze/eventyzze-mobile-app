@@ -11,7 +11,7 @@ useFocusEffect(
           { text: 'Cancel', onPress: () => null, style: 'cancel' },
           { text: 'Yes', onPress: () => navigation.goBack() },
         ]);
-        return true; // Prevent default behavior
+        return true;
       };
 
       BackHandler.addEventListener('hardwareBackPress', onBackPress);
@@ -21,5 +21,5 @@ useFocusEffect(
   );
 
   const onBackPress = () => {
-    return true; // Block back button entirely
+    return true;
   };

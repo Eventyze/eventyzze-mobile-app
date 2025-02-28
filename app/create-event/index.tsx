@@ -21,8 +21,6 @@ import Footer from "@/components/GeneralComponents/Footer";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-// import DatePicker from "react-native-modern-datepicker";
-// import { getFormatedDate, getToday } from "react-native-modern-datepicker";
 import * as DocumentPicker from "expo-document-picker";
 import Toast from "react-native-toast-message";
 import {
@@ -60,10 +58,7 @@ const CreateEventScreen = () => {
   const [categoryModal, setCategoryModal] = useState(false);
   const [caledndarActivity, setCalendarActivity] = useState(false);
   const [timeActivity, setTimeActivity] = useState(false);
-  const [eventBannerActivity, setEventBannerActivity] = useState(false);
   const [timeModal, setTimeModal] = useState(false);
-  const [videoUpload, setVideoUpload] = useState(false);
-  const [currencyModal, setCurrencyModal] = useState(false);
   const [dateHolder, setDateHolder] = useState("");
   const [eventCategoryIndicator, setEventCategoryIndicator] = useState(false);
   const [eventData, setEventData] = useState<formEventDataInterface>({
@@ -79,37 +74,6 @@ const CreateEventScreen = () => {
     category: "",
   });
   const [loading, setLoading] = useState(false);
-
-  const currencies = [
-    {
-      code: "NGN",
-      name: "Nigerian Naira",
-      flag: "🇳🇬",
-      description:
-        "The official currency of Nigeria, widely used across West Africa.",
-    },
-    {
-      code: "USD",
-      name: "United States Dollar",
-      flag: "🇺🇸",
-      description:
-        "The world's primary reserve currency, used in international trade worldwide.",
-    },
-    {
-      code: "EUR",
-      name: "Euro",
-      flag: "🇪🇺",
-      description:
-        "The official currency of the Eurozone, used by 20 European countries and also accepted worldwide.",
-    },
-    {
-      code: "GBP",
-      name: "British Pound",
-      flag: "🇬🇧",
-      description:
-        "The currency of the United Kingdom, also accepted worldwide",
-    },
-  ];
 
   const categories: categoryData[] = React.useMemo(
     () => [
@@ -290,28 +254,6 @@ const CreateEventScreen = () => {
     []
   );
 
-  const renderCurrencies = ({ item }: { item: any }) => (
-    <TouchableOpacity
-      className="flex-row items-center bg-gray-100 p-4 mb-3 rounded-lg"
-      onPress={() => {
-        setEventData((prevData) => ({ ...prevData, currency: item.code }));
-        setCurrencyModal(false);
-      }}
-    >
-      <Text className="text-3xl mr-4">{item.flag}</Text>
-      <View>
-        <View>
-        <Text className="text-lg font-semibold">
-          {item.name} ({item.code})
-        </Text>
-        </View>
-        <View className="pr-10">
-        <Text className="text-gray-500 flex-wrap">{item.description}</Text>
-      </View>
-      </View>
-    </TouchableOpacity>
-  );
-
   const renderCategories = ({ item }: { item: categoryData }) => (
     <TouchableOpacity
       className="w-full px-4 py-2"
@@ -339,76 +281,6 @@ const CreateEventScreen = () => {
       </View>
     </TouchableOpacity>
   );
-
-  // const getMimeType = (uri: string) => {
-  //   const extension:any = uri.split('.').pop()?.toLowerCase();
-  //   const mimeTypes: Record<string, string> = {
-  //     jpg: 'image/jpeg',
-  //     jpeg: 'image/jpeg',
-  //     png: 'image/png',
-  //     gif: 'image/gif',
-  //     mp4: 'video/mp4',
-  //     mov: 'video/quicktime',
-  //     avi: 'video/x-msvideo',
-  //   };
-  //   return mimeTypes[extension] || 'application/octet-stream';
-  // };
-
-  const requestPermissions = async () => {
-    const { status } = await Permissions.requestPermissionsAsync();
-    if (status !== "granted") {
-      Toast.show({
-        type: "error",
-        text1: "Permission needed to access photos",
-      });
-      return false;
-    }
-    return true;
-  };
-
-  const pickImage = useCallback(async () => {
-    const hasPermission = await requestPermissions();
-    if (!hasPermission) return;
-
-    setEventBannerActivity(true);
-
-    try {
-      const result = await launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-      });
-
-      if (!result.canceled) {
-        const selectedImage = result.assets[0];
-        if (
-          selectedImage.fileSize &&
-          selectedImage.fileSize > 10 * 1024 * 1024
-        ) {
-          setEventBannerActivity(false);
-          Toast.show({
-            type: "error",
-            text1:
-              "Image size is too large. Please select an image under 10MB.",
-          });
-          return;
-        }
-
-        setEventBannerActivity(false);
-        setEventData((prevData) => ({
-          ...prevData,
-          image: selectedImage.uri,
-        }));
-      }
-    } catch (error: any) {
-      console.log(error.message);
-      Toast.show({
-        type: "error",
-        text1: "Error selecting image",
-      });
-    }
-  }, []);
 
   const onDateChange = (event: DateTimePickerEvent, selectedDate: any) => {
     const currentDate = selectedDate;
@@ -480,59 +352,14 @@ const CreateEventScreen = () => {
     setTimeActivity(false);
   };
 
-  const handleVideoUpload = useCallback(async () => {
-    setVideoUpload(true);
-    const hasPermission = await requestPermissions();
-    if (!hasPermission) return setVideoUpload(true);
-    try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: "video/*",
-        copyToCacheDirectory: false,
-      });
-
-      if (result.canceled || !result.assets || result.assets.length === 0) {
-        setVideoUpload(false);
-        return;
-      }
-
-      const file: any = result.assets[0];
-
-      if (file.size > 10 * 1024 * 1024) {
-        Toast.show({
-          type: "error",
-          text1: "File Too Large, Please select a video less than 10MB.",
-        });
-        setVideoUpload(false);
-        return;
-      }
-
-      setEventData((prev) => ({ ...prev, ad: file.uri }));
-
-      Toast.show({
-        type: "success",
-        text1: "Successful: Video has been selected.",
-      });
-      return setVideoUpload(false);
-    } catch (error) {
-      setVideoUpload(false);
-      console.error("Error picking video:", error);
-    }
-  }, []);
-
-  const handleCreateEvent = async () => {
+  const handleEventCreationNext = async () => {
     setLoading(true);
-
-    try {
       if (
-        !eventData.ad ||
         !eventData.date ||
         !eventData.description ||
         !eventData.duration ||
         !eventData.time ||
         !eventData.title ||
-        !eventData.image ||
-        !eventData.amount ||
-        !eventData.currency ||
         !eventData.category
       ) {
         Toast.show({
@@ -542,86 +369,19 @@ const CreateEventScreen = () => {
         return setLoading(false);
       }
 
-      const data: any = new FormData();
-
-      data.append("image", {
-        uri: eventData.image,
-        type: "image/png", //getMimeType(eventData.image),
-        name: `event-image.${eventData.image.split(".").pop()}`,
-        size: undefined,
-        lastModified: undefined,
-      } as any);
-
-      const videoUri = eventData.ad;
-      const videoName = videoUri.split("/").pop();
-
-      data.append("video", {
-        uri: videoUri,
-        type: "video/mp4",
-        name: videoName,
-      });
-
-      data.append("eventTitle", eventData.title);
-      data.append("description", eventData.description);
-      data.append("date", eventData.date);
-      data.append("startTime", eventData.time);
-      data.append("duration", eventData.duration);
-      data.append("cost", eventData.amount);
-      data.append("currency", eventData.currency);
-      data.append("category", eventData.category);
-
-      const response: any = await createEvent(data);
-
-      if (response.status !== 201) {
-        setLoading(false);
-        return Toast.show({
-          type: "error",
-          text1: response.data?.message || "Failed to create event",
-        });
-      }
-
-      await storeLocalStorageData("event", response?.data?.data);
-
-      setEventData({
-        title: "",
-        description: "",
-        date: "",
-        duration: "",
-        time: "",
-        ad: "",
-        image: null,
-        amount: "",
-        currency: "",
-        category: "",
-      });
-
-      Toast.show({
-        type: "success",
-        text1: response.data.message,
-      });
-
-      return router.push({
+      router.push({
         pathname: "/create-event/event2",
         params: {
-          videoUrl: response.data.data.eventAd,
-          imageUrl: response.data.data.coverImage,
-          title: response.data.data.eventTitle,
-          description: response.data.data.description,
-          startDate: response.data.data.date,
-          time: response.data.data.startTime,
-          cost: response.data.data.cost,
-          currency: response.data.data.currency,
+          date: eventData.date,
+          description: eventData.description,
+          duration: eventData.duration,
+          time: eventData.time,
+          title: eventData.title,
+          category: eventData.category,
         },
       });
-    } catch (error: any) {
-      console.error("Error Creating event:", error.message);
-      Toast.show({
-        type: "error",
-        text1: "Error Creating event:",
-      });
-    } finally {
-      setLoading(false);
-    }
+
+      return setLoading(false);
   };
 
   return (
@@ -651,16 +411,17 @@ const CreateEventScreen = () => {
               placeholder="Event Title"
               textWidth="100%"
               maxLength={60}
-              borderColor={eventData.title ? "green" : "#555555"}
+              borderColor={eventData.title ? "#22c55e" : "#555555"}
               borderSize={eventData.title ? "2" : ""}
               onChange={(title) =>
                 setEventData((prev: any) => ({ ...prev, title: title }))
               }
             />
             <View className="">
-            <Text className="text-left mt-1 text-sm text-gray-400">{eventData.title.length}/60</Text>
+              <Text className="text-left mt-1 text-sm text-gray-400">
+                {eventData.title.length}/60
+              </Text>
             </View>
-            
           </View>
 
           <Animated.View className="p-4">
@@ -681,15 +442,15 @@ const CreateEventScreen = () => {
                 onChangeText={(desc) =>
                   setEventData((prev: any) => ({ ...prev, description: desc }))
                 }
-                borderColor={eventData.description ? "green" : "#555555"}
+                borderColor={eventData.description ? "#22c55e" : "#555555"}
                 borderSize={eventData.description ? 2 : null}
               />
             </View>
           </Animated.View>
 
           <Animated.View className="justify-between items-center">
-            <View className="flex-1 flex-row gap-10 pr-4 pl-4">
-              <View className="w-[45%]">
+            <View className="flex-1 flex-row w-full p-4">
+              <View className="w-full">
                 <Text
                   className="text-2xl"
                   style={{ fontFamily: "BarlowSemiBold" }}
@@ -701,64 +462,98 @@ const CreateEventScreen = () => {
                     ""
                   )}
                 </Text>
-
                 <TouchableOpacity
                   onPress={() => {
                     setCalendarActivity(true);
                     setCalendarModal(true);
                   }}
+                  className="w-full mt-4 h-[60px] border rounded-xl px-4 flex flex-row items-center"
+                  style={{
+                    borderColor: eventData.date ? "#22c55e" : "#555555",
+                    borderWidth: eventData.date ? 2 : 1,
+                  }}
                 >
-                  {/* <Text>Hi</Text> */}
-                  <InputField
-                    value={eventData.date}
-                    placeholder={eventData.date ? eventData.date : "YYYY-MM-DD"}
-                    textWidth="100%"
-                    borderColor={eventData.date ? "green" : "#555555"}
-                    borderSize={eventData.date ? "2" : ""}
-                    disabled={true}
-                  />
+                  <Text
+                    className={`text-base ${
+                      eventData.date ? "text-black" : "text-gray-500"
+                    }`}
+                  >
+                    {eventData.date ? eventData.date : "YYYY-MM-DD"}
+                  </Text>
                 </TouchableOpacity>
-                <View className="bg-gray-300 mt-2 h-full flex-1 justify-center items-center">
+                <View className="h-full mt-4 flex-1 justify-center items-center">
                   {calendarModal && (
+                     <Modal
+                visible={calendarModal}
+                animationType="slide"
+                transparent
+              >
+                  <View className="bg-white h-full text-[#FF8038] flex-1 justify-center items-center">
+                    {Platform.OS === "ios" && <Text className="mb-4">Click date below to select date</Text>}
                     <DateTimePicker
                       value={new Date()}
                       mode="date"
-                      display={Platform.OS === "ios" ? "spinner" : "default"}
+                      display="default"
                       minimumDate={new Date()}
                       onChange={onDateChange}
                     />
+                    </View>
+                     </Modal>
                   )}
                 </View>
               </View>
 
-              <View className="w-[45%]">
-                <Text
-                  className="text-2xl"
-                  style={{ fontFamily: "BarlowSemiBold" }}
+            </View>
+          </Animated.View>
+
+          <Animated.View className="mb-5 pl-3 pr-3 justify-center items-center flex flex-row">
+          <View className="w-full">
+              <Text
+                className="text-2xl"
+                style={{ fontFamily: "BarlowSemiBold" }}
+              >
+                Time {timeActivity ? <ActivityIndicator color="#FF8038" /> : ""}
+              </Text>
+              <TouchableOpacity onPress={() => setimeSelectionModal()}
+               className="w-full mt-4 h-[60px] border rounded-xl px-4 flex flex-row items-center"
+               style={{
+                borderColor: eventData.time ? "#22c55e" : "#555555",
+                borderWidth: eventData.time ? 2 : 1,
+              }}
                 >
-                  Upload Ad <Text className="text-base">{"(<10mb)"}</Text>{" "}
-                  {videoUpload ? <ActivityIndicator color="#FF8038" /> : ""}
-                </Text>
-                <TouchableOpacity
-                  className="rounded-xl"
-                  onPress={handleVideoUpload}
-                >
-                  <InputField
-                    // value={eventData.ad}
-                    placeholder={eventData.ad ? "Video Selected ✅" : "Video"}
-                    textWidth="100%"
-                    borderColor={eventData.ad ? "green" : "#555555"}
-                    borderSize={eventData.ad ? "2" : ""}
-                    keyboardType={"numeric"}
-                    disabled={true}
+                  <Text
+                    className={`text-base ${
+                      eventData.time ? "text-black" : "text-gray-500"
+                    }`}
+                  >
+                    {eventData.time ? eventData.time : "eg: 8:00 PM"}
+                  </Text>
+              </TouchableOpacity>
+              <View className="h-full mt-2 flex-1 justify-center items-center">
+                {timeModal && (
+                     <Modal
+                visible={timeModal}
+                animationType="slide"
+                transparent
+              >
+                  <View className="bg-white h-full text-[#FF8038] justify-center items-center flex-1">
+                  {Platform.OS === "ios" && <Text className="mb-4">Click time below to select time</Text>}
+                  <DateTimePicker
+                    value={new Date()}
+                    mode="time"
+                    display="default"
+                    minimumDate={new Date()}
+                    onChange={onTimeChange}
                   />
-                </TouchableOpacity>
+                  </View>
+                  </Modal>
+                )}
               </View>
             </View>
           </Animated.View>
 
-          <Animated.View className="mb-5 mt-4 pl-3 pr-3 gap-10 justify-center items-center flex flex-row">
-            <View className="w-[45%]">
+          <Animated.View className="mb-5 pl-3 pr-3 gap-10 justify-center items-center flex flex-row">
+            <View className="w-full">
               <Text
                 className="text-2xl"
                 style={{ fontFamily: "BarlowSemiBold" }}
@@ -767,9 +562,9 @@ const CreateEventScreen = () => {
               </Text>
               <InputField
                 value={eventData.duration}
-                placeholder={"eg 30"}
+                placeholder={"eg: 30"}
                 textWidth="100%"
-                borderColor={eventData.duration ? "green" : "#555555"}
+                borderColor={eventData.duration ? "#22c55e" : "#555555"}
                 borderSize={eventData.duration ? "2" : ""}
                 keyboardType={"numeric"}
                 onChange={(duration) =>
@@ -777,55 +572,6 @@ const CreateEventScreen = () => {
                 }
               />
             </View>
-
-            <View className="w-[45%]">
-              <Text
-                className="text-2xl"
-                style={{ fontFamily: "BarlowSemiBold" }}
-              >
-                Time {timeActivity ? <ActivityIndicator color="#FF8038" /> : ""}
-              </Text>
-              <TouchableOpacity onPress={() => setimeSelectionModal()}>
-                <InputField
-                  value={eventData.time}
-                  placeholder={"13:00"}
-                  textWidth="100%"
-                  borderColor={eventData.time ? "green" : "#555555"}
-                  borderSize={eventData.time ? "2" : ""}
-                  keyboardType={"numeric"}
-                  disabled={true}
-                />
-              </TouchableOpacity>
-              <View className="bg-gray-300 mt-2 h-full flex-1 justify-center items-center">
-                {timeModal && (
-                  <DateTimePicker
-                    value={new Date()}
-                    mode="time"
-                    display={Platform.OS === "ios" ? "spinner" : "default"}
-                    minimumDate={new Date()}
-                    onChange={onTimeChange}
-                  />
-                )}
-              </View>
-            </View>
-          </Animated.View>
-
-          <Animated.View className="pl-3 pr-3">
-            <Text className="text-2xl" style={{ fontFamily: "BarlowSemiBold" }}>
-              Event Banner{" "}
-              {eventBannerActivity ? <ActivityIndicator color="#FF8038" /> : ""}
-            </Text>
-            <TouchableOpacity onPress={pickImage}>
-              <InputField
-                placeholder={
-                  eventData.image ? "Image Selected ✅" : "Image <10mb"
-                }
-                textWidth="100%"
-                borderColor={eventData.image ? "green" : "#555555"}
-                borderSize={eventData.image ? "2" : ""}
-                disabled={true}
-              />
-            </TouchableOpacity>
           </Animated.View>
 
           <Animated.View className="pl-3 pr-3 mt-4">
@@ -843,15 +589,19 @@ const CreateEventScreen = () => {
                 setCategoryModal(true);
                 setEventCategoryIndicator(true);
               }}
+              className="w-full mt-4 h-[60px] border rounded-xl px-4 flex flex-row items-center"
+                  style={{
+                    borderColor: eventData.category ? "#22c55e" : "#555555",
+                    borderWidth: eventData.category ? 2 : 1,
+                  }}
             >
-              <InputField
-                placeholder="Select Category"
-                textWidth="100%"
-                value={eventData.category}
-                borderColor={eventData.category ? "green" : "#555555"}
-                borderSize={eventData.category ? "2" : ""}
-                disabled={true}
-              />
+                 <Text
+                    className={`text-base ${
+                      eventData.category ? "text-black" : "text-gray-500"
+                    }`}
+                  >
+                    {eventData.category ? eventData.category : "Select Category"}
+                  </Text>
             </TouchableOpacity>
 
             {/* Dropdown Menu */}
@@ -899,83 +649,19 @@ const CreateEventScreen = () => {
             </Modal>
           </Animated.View>
 
-          <Text
-            className="text-2xl mt-6 pl-3"
-            style={{ fontFamily: "BarlowSemiBold" }}
-          >
-            Ticket Cost
-          </Text>
-          <Animated.View className="mb-5 mt-4 gap-6 pl-6 pr-6 justify-center items-center flex flex-row">
-            <View className="w-[40%]">
-              <Text className="text-lg">Currency</Text>
-              <TouchableOpacity onPress={() => setCurrencyModal(true)}>
-                <InputField
-                  // value={eventData.currency}
-                  placeholder={eventData.currency ? eventData.currency : "NGN"}
-                  textWidth="100%"
-                  borderColor={eventData.currency ? "green" : "#555555"}
-                  borderSize={eventData.currency ? "2" : ""}
-                  disabled={true}
-                  textAlign={"center"}
-                />
-              </TouchableOpacity>
-              <Modal
-                visible={currencyModal}
-                animationType="slide"
-                presentationStyle="fullScreen"
-              >
-                <View className="flex-1 bg-white">
-                  <View className="p-4 flex flex-row justify-between border-b border-gray-300">
-                    <Text className="text-xl font-bold">
-                      Select Currency
-                    </Text>
-                  <TouchableOpacity onPress={() => setCurrencyModal(false)}>
-                    <Text className="w-[70%] text-center">
-                      {<MaterialIcons name="close" size={25} color="#FF8038" />}
-                    </Text>
-                    </TouchableOpacity>
-                  </View>
-
-                  <FlatList
-                    data={currencies}
-                    renderItem={renderCurrencies}
-                    keyExtractor={(item) => item.code}
-                    contentContainerStyle={{ padding: 16 }}
-                  />
-                </View>
-              </Modal>
-            </View>
-
-            <View className="w-[60%]">
-              <Text className="text-lg">Amount</Text>
-              <InputField
-                value={eventData.amount}
-                placeholder={"10000"}
-                textWidth="100%"
-                borderColor={eventData.amount ? "green" : "#555555"}
-                borderSize={eventData.amount ? "2" : ""}
-                keyboardType={"numeric"}
-                onChange={(amount) =>
-                  setEventData((prev: any) => ({ ...prev, amount: amount }))
-                }
-              />
-            </View>
-          </Animated.View>
-
           <View className="gap-4 px-4 mt-8 mb-8">
             <Button
-              title="Create Event"
+              title={loading ? "Loading..." : "Next"}
               gradientPadding={1}
               gradientColors={["#FF8038", "#FF8038", "#FF8038"]}
               buttonColour={"#FF8038"}
               buttonWidth={"full"}
-              action={handleCreateEvent}
+              action={handleEventCreationNext}
             />
           </View>
         </ScrollView>
         <Footer />
       </View>
-      <Loading isOpen={loading} />
     </SafeAreaView>
   );
 };

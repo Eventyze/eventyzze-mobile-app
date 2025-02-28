@@ -1,13 +1,40 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Modal as RNModal } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, ActivityIndicator, Modal as RNModal } from 'react-native';
+import { useUser } from '@/context/UserContext';
+import { logoutClear } from '@/services/axiosSetup/storage';
+import Toast from 'react-native-toast-message';
+import { router } from 'expo-router';
 
 interface LogoutModalProps {
   visible: boolean;
   onClose: () => void;
-  onLogout: () => void;
 }
 
-const LogoutModal: React.FC<LogoutModalProps> = ({ visible, onClose, onLogout }) => {
+const LogoutModal: React.FC<LogoutModalProps> = ({ visible, onClose }) => {
+
+  const [logoutLoad, setLogoutLoad] = useState(false);
+
+  const { logoutUser } = useUser()
+
+  const handleLogout = async () => {
+
+    setLogoutLoad(true);
+
+    await logoutClear();
+
+    logoutUser();
+
+    onClose()
+
+    Toast.show({
+      type: 'success',
+      text1: 'Good bye, we hope to see you again soon!',
+      visibilityTime: 3000,
+    });
+    router.push('/login');
+  }
+
+
   return (
     <RNModal
       animationType="fade"
@@ -23,8 +50,9 @@ const LogoutModal: React.FC<LogoutModalProps> = ({ visible, onClose, onLogout })
 
           <View className="flex-row justify-between mt-6 gap-14 px-10">
             <TouchableOpacity
-              onPress={onClose}
-              className="flex-1 py-3 rounded-lg bg-[#EDD3D3]"
+              onPress={()=> {setLogoutLoad(false); onClose()}}
+              className={`flex-1 py-3 rounded-lg bg-[#EDD3D3] ${logoutLoad ? 'opacity-50' : ''}`}
+              disabled={logoutLoad}
             >
               <Text className="text-center text-[#CB3636] font-semibold text-lg">
                 No
@@ -32,11 +60,11 @@ const LogoutModal: React.FC<LogoutModalProps> = ({ visible, onClose, onLogout })
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={()=> {onLogout(); onClose()}}
+              onPress={()=> handleLogout()}
               className="flex-1 py-3 rounded-lg bg-[#DFEDD3]"
             >
-              <Text className="text-center text-[#319F43] font-semibold text-lg">
-                Yes
+              <Text className="text-center flex-1 justify-center items-center text-[#319F43] font-semibold text-lg">
+              { logoutLoad ? <ActivityIndicator color="#FF8038" /> : 'Yes'}
               </Text>
             </TouchableOpacity>
           </View>

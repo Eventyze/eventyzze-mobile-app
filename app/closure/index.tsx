@@ -79,7 +79,7 @@ export default function Closure() {
               style={{ fontFamily: 'BarlowRegular' }}
             >
               Stream and replay live{'\n'}
-              events on eventyze
+              events on eventyzze
             </Text>
 
             <TouchableOpacity

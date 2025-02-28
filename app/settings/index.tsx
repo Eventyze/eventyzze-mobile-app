@@ -6,7 +6,6 @@ import Footer from '../../components/GeneralComponents/Footer';
 import { clearLocalStorage, logoutClear } from '../../services/axiosSetup/storage';
 import Toast from 'react-native-toast-message';
 import LogoutModal from '../../components/Profile/LogoutModal';
-import { useUser } from '@/context/UserContext';
 
 interface SettingItemProps {
   icon: string;
@@ -61,18 +60,8 @@ const user = 0;
 export default function Settings() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  const { logoutUser } = useUser()
+  const [logoutLoading, setLogoutLoading] = useState(false);
 
-  const handleLogout = async () => {
-    await logoutClear();
-    logoutUser()
-    Toast.show({
-      type: 'success',
-      text1: 'Good bye, we hope to see you again soon!',
-      visibilityTime: 3000,
-    });
-    router.push('/login');
-  }
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -186,7 +175,7 @@ export default function Settings() {
         <LogoutModal
           visible={showLogoutModal}
           onClose={() => setShowLogoutModal(false)}
-          onLogout={handleLogout}
+          // onLogout={handleLogout}
         />
 
         {/* Bottom padding for footer */}

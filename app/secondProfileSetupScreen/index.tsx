@@ -22,6 +22,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
 import PhoneInput from "react-native-phone-input";
+import PhoneInputCustom from "@/components/GeneralComponents/CustomPhoneInput";
 import countriesData from '../../data/countries_states.json';
 
 interface CountryItem {
@@ -202,6 +203,8 @@ export default function SecondProfileSetupScreen() {
       });
     }
 
+    console.log('data:', formData)
+
     if (!formData.fullName.trim()) {
       return Toast.show({
         type: "error",
@@ -288,13 +291,14 @@ export default function SecondProfileSetupScreen() {
     <SafeAreaView className="flex-1 mt-2 bg-white">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
+      
         style={{ flex: 1 }}
         className="mb-10"
       >
         <View className="flex bg-white pb-4 shadow-gray-600 px-4 mt-20">
         <Animated.View className="flex-row gap-2 items-center">
           <View>
-            <Text className="text-2xl" style={{ fontFamily: "BarlowBold" }}>
+            <Text className="text-3xl" style={{ fontFamily: "BarlowBold" }}>
               Profile Setup
             </Text>
           </View>
@@ -302,7 +306,7 @@ export default function SecondProfileSetupScreen() {
         </View>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
-        <View className="pt-7 pb-6 px-4">
+        <View className="pb-6 px-4">
           <Animated.View className="flex-col justify-between items-start w-full">
           <View className="w-full mt-4">
                   <Text
@@ -320,35 +324,21 @@ export default function SecondProfileSetupScreen() {
                     }
               />
             </View>
-            <View className="w-full mt-4">
+
+<View className="w-full mt-4">
                   <Text
                     className="text-2xl"
                     style={{ fontFamily: "BarlowBold" }}
                   >
-              Phone
-              </Text>
-                  <TouchableOpacity
-                    activeOpacity={0.8}
-                    className="bg-white border border-[#C9C9C9] rounded-xl"
-                  >
-                    <PhoneInput
-                      ref={phoneInputRef}
-                      initialCountry={"ng"}
-                      // initialValue="+2343178675309"
-                      textProps={{
-                        placeholder: "Enter a phone number...",
-                        placeholderTextColor: "#999",
-                      }}
-                      style={styles.phoneInput}
-                      flagStyle={styles.flag}
-                      pickerItemStyle={styles.pickerItem}
-                      cancelTextStyle={styles.cancelText}
-                      confirmTextStyle={styles.confirmText}
-                      onChangePhoneNumber={(text)=> handlePhoneChange(text)}
-                      pickerBackgroundColor="#FF8038"
-                    />
-                  </TouchableOpacity>
-            </View>
+                    Phone
+                  </Text>
+                  <PhoneInputCustom
+                    value={formData.phoneNumber.replace(/^\+\d+/, '')}
+                    onChangePhoneNumber={handlePhoneChange}
+                    placeholder="Enter your phone number"
+                    initialCountryCode="NG"
+                  />
+                </View>
             <View className="w-full mt-4">
                   <Text
                     className="text-2xl"

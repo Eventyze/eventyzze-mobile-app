@@ -33,7 +33,6 @@ export default function ForgotPassword() {
           text2: 'Please check your email for password reset instructions.',
         });
         
-        // Optionally navigate to a confirmation screen
         router.push('/login');
       } else {
         Toast.show({

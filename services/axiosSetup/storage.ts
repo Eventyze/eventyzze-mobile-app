@@ -25,7 +25,16 @@ export const clearLocalStorage = async () => {
   } catch (error) {
     console.error('Error clearing storage:', error);
   }
-}; 
+};
+
+export const clearSingleItemFromLocalStorage = async (key:string) => {
+  try {
+    await AsyncStorage.removeItem(key);
+    console.log(`Item with key "${key}" removed successfully.`);
+  } catch (error) {
+    console.error('Error removing item:', error);
+  }
+};
 
 export const logoutClear = async () => {
   try {

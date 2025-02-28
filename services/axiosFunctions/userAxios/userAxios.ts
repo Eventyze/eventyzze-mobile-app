@@ -196,7 +196,7 @@ export const emailSignup = async (body: SignupBody): Promise<ApiResponse> => {
   };
 
 
-export const userLogout = async (email:string) => {
+export const userLogout = async (email:Record<string, any>) => {
   try {
     const response = await axios.post("/users/logout", email);
     return response;

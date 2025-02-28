@@ -4,21 +4,29 @@
     "slug": "eventyzze2",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/general/eventyze-logo.png",
+    "icon": "./assets/general/eventyzze-logo.png",
     "scheme": "myapp",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "deeplink": "myapp://",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.eventyzze.app",
-      "userInterfaceStyle": "light"
+      "userInterfaceStyle": "light",
+      "splash": {
+        "image": "./assets/general/eventyzze-logo.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#000000"
+      }
     },
     "android": {
       "usesCleartextTraffic": true,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/general/eventyze-logo.png",
+        "foregroundImage": "./assets/general/eventyzze-logo.png",
         "backgroundColor": "#000000",
         "intentFilters": [
           {
@@ -29,7 +37,23 @@
                 "host": "payment-callback"
               }
             ],
-            "category": ["BROWSABLE", "DEFAULT"]
+            "category": [
+              "BROWSABLE",
+              "DEFAULT"
+            ]
+          },
+          {
+            "action": "VIEW",
+            "data": [
+              {
+                "scheme": "myapp",
+                "host": "payment-callback"
+              }
+            ],
+            "category": [
+              "BROWSABLE",
+              "DEFAULT"
+            ]
           }
         ]
       },
@@ -42,24 +66,17 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/general/eventyze-logo.png"
+      "favicon": "./assets/general/eventyzze-logo.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/general/eventyze-logo.png",
+          "image": "./assets/general/eventyzze-logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#000000"
-        }
-      ],
-      [
-        "expo-media-library",
-        {
-          "photosPermission": "Allow Eventyzze to access your photos.",
-          "savePhotosPermission": "Allow Eventyzze to save photos."
         }
       ]
     ],
@@ -71,7 +88,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "6e43d96d-5aa2-40ef-b585-a36bed00cd12"
+        "projectId": "09dda1c8-a0b7-45af-ade8-c484105cc108"
       }
     },
     "owner": "akem",
@@ -79,7 +96,7 @@
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/6e43d96d-5aa2-40ef-b585-a36bed00cd12"
+      "url": "https://u.expo.dev/09dda1c8-a0b7-45af-ade8-c484105cc108"
     }
   }
 }

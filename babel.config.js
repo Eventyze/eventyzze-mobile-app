@@ -5,8 +5,8 @@ module.exports = function (api) {
         ["babel-preset-expo", { jsxImportSource: "nativewind" }],
         "nativewind/babel",
       ],
-      // generatorOpts: {
-      //   maxSize: 2 * 1024 * 1024, // 2MB instead of default 500KB
-      // }
+      plugins: [
+        "react-native-reanimated/plugin",
+      ],
     };
   };

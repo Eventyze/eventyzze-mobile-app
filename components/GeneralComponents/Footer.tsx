@@ -48,10 +48,11 @@ export default function Footer() {
   );
 
   const createEventRedirect = async () => {
+    try{
     if (
       currentPath === "/create-event" ||
-      currentPath === "/create-event-event2" ||
-      currentPath === "/create-event-event3"
+      currentPath === "/create-event/event2" ||
+      currentPath === "/create-event/event3"
     ) {
       return;
     }
@@ -86,6 +87,11 @@ export default function Footer() {
     }
 
     setLoading(false);
+  }catch(error:any){
+    console.log(error.message)
+  }finally{
+    setLoading(false)
+  }
   };
 
   return (

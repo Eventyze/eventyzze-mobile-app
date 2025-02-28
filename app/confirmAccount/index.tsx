@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Keyboard } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Keyboard, SafeAreaView } from "react-native";
 import Animated from "react-native-reanimated";
 import Button from "../../components/Button";
 import { router } from "expo-router";
@@ -81,6 +81,8 @@ export default function Otp() {
       
       if (response.status >= 200 && response.status < 300) {
         setOtp(["", "", "", "", ""]);
+        setIsLoading(false)
+        setIsResending(false)
         
         Toast.show({
           type: 'success',
@@ -88,6 +90,8 @@ export default function Otp() {
         });
         router.push('/profileSetup');
       } else {
+        setIsLoading(false)
+        setIsResending(false)
         Toast.show({
           type: 'error',
           text1: response.data?.message || 'Invalid OTP. Please try again.',
@@ -100,6 +104,7 @@ export default function Otp() {
       });
     } finally {
       setIsLoading(false);
+      setIsResending(false);
     }
   };
 
@@ -127,16 +132,21 @@ export default function Otp() {
         });
       }
     } catch (err) {
+      setIsResending(false);
       Toast.show({
         type: 'error',
         text1: 'An error occurred while resending OTP.',
       });
+    } finally {
+      setIsLoading(false);
+      setIsResending(false);
     }
   };
 
   const isOtpComplete = otp.every(digit => digit !== "");
 
   return (
+    <SafeAreaView className="flex-1 bg-white">
     <View className="bg-white flex-1">
       <View className="pt-16 pb-6 px-4">
         <Animated.View className="flex-row justify-between items-center">
@@ -238,6 +248,7 @@ export default function Otp() {
         </Text>
       </View>
     </View>
+      </SafeAreaView>
   );
 }
 

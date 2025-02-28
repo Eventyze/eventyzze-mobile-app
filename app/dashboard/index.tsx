@@ -10,130 +10,8 @@ import Toast from 'react-native-toast-message';
 import { fetchAllHosts, fetchLiveEvents, fetchTrendingEvents } from '@/services/axiosFunctions/userAxios/userAxios';
 import Loading from '@/components/GeneralComponents/Loading';
 
-// import {} from '../../assets/dashboard'
-
-// Dummy data for hosts
-const hosts = [
-  { id: "1", name: 'Judykay', image: require('../../assets/dashboard/maJudy.jpg') },
-  { id: "2", name: 'Nathaniel Bassey', image: require('../../assets/dashboard/sirNath.jpg') },
-  { id: "3", name: 'Victoria Orenze', image: require('../../assets/dashboard/mamaVic.jpg') },
-  { id: "4", name: 'Dunsin Onyekan', image: require('../../assets/dashboard/sird.jpeg') },
-  { id: "5", name: 'Sinach', image: require('../../assets/dashboard/mamaSinach.jpg') },
-  { id: "6", name: 'Theophilus Sunday', image: require('../../assets/dashboard/sirTheo.jpeg') },
-];
-
-// Dummy data for live shows
-const liveShows = [
-  {
-    id: '1',
-    title: 'The be-attitudes',
-    artist: 'Apostle Selman',
-    image: require('../../assets/dashboard/daddySelman.webp'),
-    isLive: true,
-  },
-  {
-    id: '2',
-    title: 'The Awakening',
-    artist: 'Apostle Arome',
-    image: require('../../assets/dashboard/daddyArome.jpg'),
-    isLive: true,
-  },
-  {
-    id: '3',
-    title: 'My Worship',
-    artist: 'Phil Thompson',
-    image: require('../../assets/dashboard/sirPhil.jpeg'),
-    isLive: true,
-  },
-  {
-    id: '4',
-    title: 'Hour of Revival',
-    artist: 'Prospa Ochimana',
-    image: require('../../assets/dashboard/sirProspa.jpeg'),
-    isLive: true,
-  },
-  {
-    id: '5',
-    title: 'Yaweh',
-    artist: 'Steve Crown',
-    image: require('../../assets/dashboard/sirSteve.jpg'),
-    isLive: true,
-  },
-];
-
 // Add these new category options
-//"Music", "More"
 const categories = ["Trending", "New", "Discover", "Recorded", "Attended"];
-
-// Update the recommendedShows data structure
-const recommendedShows = [
-  {
-    id: "1",
-    title: 'Peace, Love and Light (music fest)',
-    artist: 'Fischer',
-    image: require('../../assets/dashboard/sirSteve.jpg'),
-  },
-  {
-    id: "2",
-    title: 'Lively concerto',
-    artist: 'Lively and Them',
-    image: require('../../assets/dashboard/maJudy.jpg'),
-  },
-  {
-    id: "3",
-    title: 'Sing Off',
-    artist: 'Musiccc',
-    image: require('../../assets/dashboard/sird.jpeg'),
-  },
-  {
-    id: "4",
-    title: 'Shine on Music',
-    artist: 'Dan the creator',
-    image: require('../../assets/dashboard/sirTheo.jpeg'),
-  },
-  {
-    id: "5",
-    title: 'Lively concerto',
-    artist: 'Lively and Them',
-    image: require('../../assets/dashboard/daddyArome.jpg'),
-  },
-  {
-    id: "6",
-    title: 'Sing Off',
-    artist: 'Musiccc',
-    image: require('../../assets/dashboard/sirPhil.jpeg'),
-  },
-  {
-    id: "7",
-    title: 'Shine on Music',
-    artist: 'Dan the creator',
-    image: require('../../assets/dashboard/sirProspa.jpeg'),
-  },
-  {
-    id: "8",
-    title: 'Shine on Music',
-    artist: 'Dan the creator',
-    image: require('../../assets/dashboard/sirTheo.jpeg'),
-  },
-  {
-    id: "9",
-    title: 'Lively concerto',
-    artist: 'Lively and Them',
-    image: require('../../assets/dashboard/daddyArome.jpg'),
-  },
-  {
-    id: "10",
-    title: 'Sing Off',
-    artist: 'Musiccc',
-    image: require('../../assets/dashboard/sirPhil.jpeg'),
-  },
-  {
-    id: "11",
-    title: 'Shine on Music',
-    artist: 'Dan the creator',
-    image: require('../../assets/dashboard/sirProspa.jpeg'),
-  },
-];
 
 interface liveShowsData {
   id: string;
@@ -149,7 +27,7 @@ interface trendingShowsData {
   ownerName: string;
   coverImage: any;
 }
-//userName
+
 interface hostData {
   id: string;
   userName: string;
@@ -173,7 +51,6 @@ export default function Dashboard() {
     try{
       const data = await fetchAllHosts()
       setNewHosts(data.data.data)
-      console.log('yesir',data.data)
     }catch (error: any) {
       console.error(error.message)
     } finally {
@@ -222,7 +99,7 @@ export default function Dashboard() {
   return (
     <SafeAreaView className="flex-1 mt-12 bg-white">
       <ScrollView 
-        className="flex-1"
+        className="flex-1 bg-white"
         showsVerticalScrollIndicator={false}
         stickyHeaderIndices={[2]}
         refreshControl={
@@ -247,7 +124,7 @@ export default function Dashboard() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {newHosts.map((host) => (
               <TouchableOpacity key={host.id} className="mr-4">
-                  <View className="bg-white rounded-full p-[2px]">
+                  <View className="bg-gray-200 rounded-full p-[2px]">
                     <Image
                       source={{uri: host.userImage}}
                       className="w-14 h-14 rounded-full"
@@ -285,9 +162,9 @@ export default function Dashboard() {
             {databaseLiveShows.map((show) => (
               <TouchableOpacity 
                 key={show.id}
-                className="mr-4 rounded-xl bg-red-900 relative"
+                className="mr-4 rounded-xl relative"
               >
-                <View className='rounded-xl'>
+                <View className='rounded-xl bg-gray-200'>
                 <Image
                   source={{uri: show.coverImage}}
                   className="w-[220px] h-[323px] rounded-xl"
@@ -354,7 +231,7 @@ export default function Dashboard() {
             >
               <Image
                 source={{uri: show.coverImage}}
-                className="w-[130px] h-32 rounded-lg"
+                className="w-[130px] bg-gray-200 h-32 rounded-lg"
                 resizeMode="stretch"
               />
               <View className="flex-1 ml-3">

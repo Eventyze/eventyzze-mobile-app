@@ -76,6 +76,7 @@ export default function Login() {
         } else {
           router.push("/dashboard");
         }
+        setIsLoading(false);
         return setLoginInput({ email: "", password: "" });
       } else if (response.status === 403) {
         Toast.show({

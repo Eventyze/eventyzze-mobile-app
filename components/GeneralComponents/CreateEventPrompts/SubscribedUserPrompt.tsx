@@ -19,13 +19,13 @@ const SubscribedUserPrompt:React.FC<HostProps> = ({ onClose }) => {
           events (You will still enjoy your free service)!!{" "}
           <Text className="font-bold">😁</Text>
         </Text>
-        <View className="flex-1 flex-row justify-center items-center px-24 gap-4">
+        <View className="flex-1 flex-row justify-center items-center px-28 gap-4">
           <TouchableOpacity
             className="bg-white w-full border border-[#FF8038] rounded-full p-4"
             // onPress={() => router.push("")}
           >
             <Text className="text-center text-black text-lg font-semibold">
-              Continue free
+              Free Trial
             </Text>
           </TouchableOpacity>
           <TouchableOpacity

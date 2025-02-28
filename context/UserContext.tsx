@@ -28,6 +28,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const logoutUser = async () => {
     try {
       const user = await getLocalStorageData('user');
+      const data = {email: user.email};
+
       if (!user) {
         console.warn("No user found in storage, skipping logout");
         await logoutClear();
@@ -35,9 +37,10 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         setIsAuthenticated(false);
         return router.replace('/login');
       }
+
   
-      const response = await userLogout(user.email);
-      console.log("User logout response:", response);
+      const response = await userLogout(data);
+      console.log("User logout response:", response.data);
   
       await logoutClear();
       setUser(null);
