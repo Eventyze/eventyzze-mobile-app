@@ -7,6 +7,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import Toast from "react-native-toast-message";
 import * as Device from 'expo-device';
 import { updateProfileFirstime } from "../../services/axiosFunctions/userAxios/userAxios";
+import { storeLocalStorageData } from "@/services/axiosSetup/storage";
 
 export default function Preferences() {
   const params = useLocalSearchParams();
@@ -59,10 +60,12 @@ export default function Preferences() {
         interests: selectedOptions
       };
 
-      console.log('use',userData)
       const response = await updateProfileFirstime(userData);
 
+      console.log('res', response.data?.data?.user)
+      
       if (response.status === 200) {
+        await storeLocalStorageData('user', response?.data?.data?.user)
         router.push("/signupRedirect");
       } else {
         Toast.show({

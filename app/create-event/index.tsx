@@ -353,7 +353,9 @@ const CreateEventScreen = () => {
   };
 
   const handleEventCreationNext = async () => {
+    if (loading) return;
     setLoading(true);
+    try{
       if (
         !eventData.date ||
         !eventData.description ||
@@ -369,6 +371,7 @@ const CreateEventScreen = () => {
         return setLoading(false);
       }
 
+      await Promise.all([
       router.push({
         pathname: "/create-event/event2",
         params: {
@@ -379,9 +382,18 @@ const CreateEventScreen = () => {
           title: eventData.title,
           category: eventData.category,
         },
-      });
+      }),
+      new Promise(resolve => setTimeout(resolve, 500))
+      ]) 
+    }catch(error:any){
+      Toast.show({
+        type: "error",
+        text1: error.message,
+      })
+    }finally{
+      setLoading(false)
+    }
 
-      return setLoading(false);
   };
 
   return (
@@ -576,7 +588,7 @@ const CreateEventScreen = () => {
 
           <Animated.View className="pl-3 pr-3 mt-4">
             <Text className="text-2xl" style={{ fontFamily: "BarlowSemiBold" }}>
-              Categories{" "}
+              Event Category{" "}
               {eventCategoryIndicator ? (
                 <ActivityIndicator color="#FF8038" />
               ) : (
@@ -657,6 +669,7 @@ const CreateEventScreen = () => {
               buttonColour={"#FF8038"}
               buttonWidth={"full"}
               action={handleEventCreationNext}
+              disabled={loading}
             />
           </View>
         </ScrollView>

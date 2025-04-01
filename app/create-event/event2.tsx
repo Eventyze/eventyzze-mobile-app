@@ -25,11 +25,11 @@ import DateTimePicker, {
 import * as DocumentPicker from "expo-document-picker";
 import Toast from "react-native-toast-message";
 import {
+  requestCameraPermissionsAsync,
   requestMediaLibraryPermissionsAsync,
-  launchImageLibraryAsync,
-} from "expo-image-picker";
+  launchImageLibraryAsync
+} from 'expo-image-picker';
 import { storeLocalStorageData } from "@/services/axiosSetup/storage";
-import * as Permissions from "expo-media-library";
 import Loading from "@/components/GeneralComponents/Loading";
 import { createEvent } from "@/services/axiosFunctions/eventAxios/eventAxios";
 import TimePickerModal from "@/components/GeneralComponents/TimePicker";
@@ -136,21 +136,81 @@ const SecondEventCreationPage = () => {
   ];
 
   const requestPermissions = async () => {
-    const { status } = await Permissions.requestPermissionsAsync();
-    if (status !== "granted") {
+    try {
+      const { status: cameraStatus } = await requestCameraPermissionsAsync();
+      const { status: libraryStatus } = await requestMediaLibraryPermissionsAsync();
+      
+      if (cameraStatus !== 'granted' || libraryStatus !== 'granted') {
+        Toast.show({
+          type: 'error',
+          text1: 'Permission needed to access camera and photos',
+        });
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error('Permission error:', error);
       Toast.show({
-        type: "error",
-        text1: "Permission needed to access photos",
+        type: 'error',
+        text1: 'Error requesting permissions',
       });
       return false;
     }
-    return true;
   };
+
+  const pickImage = useCallback(async () => {
+    const hasPermission = await requestPermissions();
+    if (!hasPermission) return;
+
+    setEventBannerActivity(true);
+
+    try {
+      const result = await launchImageLibraryAsync({
+        mediaTypes: "images",  // Changed from ["images"] to "images"
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+        allowsMultipleSelection: false,  // Added for clarity
+      });
+
+      if (result.canceled) {
+        setEventBannerActivity(false);
+        return;
+      }
+
+      if (result.assets && result.assets.length > 0) {
+        const selectedImage = result.assets[0];
+        if (selectedImage.fileSize && selectedImage.fileSize > 5 * 1024 * 1024) {
+          Toast.show({
+            type: "error",
+            text1: "Image size is too large. Please select an image not more than 5MB.",
+          });
+        } else {
+          setEventData((prevData) => ({
+            ...prevData,
+            image: selectedImage.uri,
+          }));
+        }
+      }
+    } catch (error: any) {
+      console.log(error.message);
+      Toast.show({
+        type: "error",
+        text1: "Error selecting image",
+      });
+    } finally {
+      setEventBannerActivity(false);
+    }
+  }, []);
 
   const handleVideoUpload = useCallback(async () => {
     setVideoUpload(true);
     const hasPermission = await requestPermissions();
-    if (!hasPermission) return setVideoUpload(true);
+    if (!hasPermission) {
+      setVideoUpload(false);
+      return;
+    }
+
     try {
       const result = await DocumentPicker.getDocumentAsync({
         type: "video/*",
@@ -162,77 +222,29 @@ const SecondEventCreationPage = () => {
         return;
       }
 
-      const file: any = result.assets[0];
+      const file = result.assets[0];
 
-      if (file.size > 25 * 1024 * 1024) {
+      if (file.size && file.size > 25 * 1024 * 1024) {
         Toast.show({
           type: "error",
           text1: "File Too Large, Please select a video not more than 25MB.",
         });
-        setVideoUpload(false);
         return;
       }
 
       setEventData((prev) => ({ ...prev, ad: file.uri }));
-
       Toast.show({
         type: "success",
-        text1: "Successful: Video has been selected.",
+        text1: "Video selected successfully",
       });
-      return setVideoUpload(false);
     } catch (error) {
-      setVideoUpload(false);
       console.error("Error picking video:", error);
-    }
-  }, []);
-
-  const pickImage = useCallback(async () => {
-    const hasPermission = await requestPermissions();
-    if (!hasPermission) return;
-
-    setEventBannerActivity(true);
-
-    try {
-      const result = await launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-      });
-
-      if (result.canceled) {
-        setEventBannerActivity(false);
-        return;
-      }
-
-      if (!result.canceled) {
-        const selectedImage = result.assets[0];
-        if (
-          selectedImage.fileSize &&
-          selectedImage.fileSize > 5 * 1024 * 1024
-        ) {
-          setEventBannerActivity(false);
-          Toast.show({
-            type: "error",
-            text1:
-              "Image size is too large. Please select an image not more than 5MB.",
-          });
-          return;
-        }
-
-        setEventBannerActivity(false);
-        setEventData((prevData) => ({
-          ...prevData,
-          image: selectedImage.uri,
-        }));
-      }
-    } catch (error: any) {
-      setEventBannerActivity(false);
-      console.log(error.message);
       Toast.show({
         type: "error",
-        text1: "Error selecting image",
+        text1: "Error selecting video",
       });
+    } finally {
+      setVideoUpload(false);
     }
   }, []);
 
@@ -452,7 +464,7 @@ const SecondEventCreationPage = () => {
         },
       });
 
-      return setTimeout(()=> {
+      return setTimeout(() => {
         setIncludeEarlyBird(false)
       }, 5000)
 
@@ -498,9 +510,8 @@ const SecondEventCreationPage = () => {
               }}
             >
               <Text
-                className={`text-base ${
-                  eventData.ad ? "text-black" : "text-gray-500"
-                }`}
+                className={`text-base ${eventData.ad ? "text-black" : "text-gray-500"
+                  }`}
               >
                 {eventData.ad ? "Video Selected ✅" : "Select Video"}
               </Text>
@@ -521,9 +532,8 @@ const SecondEventCreationPage = () => {
               }}
             >
               <Text
-                className={`text-base ${
-                  eventData.image ? "text-black" : "text-gray-500"
-                }`}
+                className={`text-base ${eventData.image ? "text-black" : "text-gray-500"
+                  }`}
               >
                 {eventData.image ? "Image Selected ✅" : "Select Image"}
               </Text>
@@ -548,9 +558,8 @@ const SecondEventCreationPage = () => {
                   }}
                 >
                   <Text
-                    className={`text-base ${
-                      eventData.currency ? "text-black" : "text-gray-500"
-                    }`}
+                    className={`text-base ${eventData.currency ? "text-black" : "text-gray-500"
+                      }`}
                   >
                     {eventData.currency
                       ? eventData.currency
@@ -691,11 +700,10 @@ const SecondEventCreationPage = () => {
                   }}
                 >
                   <Text
-                    className={`text-base ${
-                      eventData.earlyBirdDeadline
+                    className={`text-base ${eventData.earlyBirdDeadline
                         ? "text-black"
                         : "text-gray-500"
-                    }`}
+                      }`}
                   >
                     {eventData.earlyBirdDeadline
                       ? eventData.earlyBirdDeadline

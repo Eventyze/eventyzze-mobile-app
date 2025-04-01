@@ -21,10 +21,20 @@
         "image": "./assets/general/eventyzze-logo.png",
         "resizeMode": "contain",
         "backgroundColor": "#000000"
+      },
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Allow access to photo library to select event images",
+        "NSMicrophoneUsageDescription": "Allow access to microphone for video uploads"
       }
     },
     "android": {
       "usesCleartextTraffic": true,
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "READ_MEDIA_IMAGES",
+        "READ_MEDIA_VIDEO"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/general/eventyzze-logo.png",
         "backgroundColor": "#000000",
